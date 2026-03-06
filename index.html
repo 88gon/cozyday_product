@@ -1,14 +1,81 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <title>나의 운명 - 사주 분석</title>
+    <style>
+        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: #f9f6f2; display: flex; justify-content: center; padding: 50px; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h2 { color: #5d4037; text-align: center; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #8d6e63; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        button:hover { background-color: #6d4c41; }
+        #result { margin-top: 25px; display: none; border-top: 2px solid #eee; padding-top: 20px; }
+        .saju-table { width: 100%; text-align: center; border-collapse: collapse; margin-top: 10px; }
+        .saju-table th, .saju-table td { border: 1px solid #ddd; padding: 10px; }
+        .saju-table th { background-color: #fdf5e6; }
+    </style>
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+
+<div class="container">
+    <h2>✨ 사주팔자 분석</h2>
+    <div class="input-group">
+        <label>이름</label>
+        <input type="text" id="userName" placeholder="이름을 입력하세요">
+    </div>
+    <div class="input-group">
+        <label>생년월일</label>
+        <input type="date" id="birthDate">
+    </div>
+    <div class="input-group">
+        <label>태어난 시간</label>
+        <input type="time" id="birthTime">
+    </div>
+    <button onclick="calculateSaju()">운세 확인하기</button>
+
+    <div id="result">
+        <h3 id="resultTitle"></h3>
+        <table class="saju-table">
+            <tr>
+                <th>시주(時)</th>
+                <th>일주(日)</th>
+                <th>월주(月)</th>
+                <th>년주(年)</th>
+            </tr>
+            <tr id="heavenlyStems"> <td>?</td><td>?</td><td>?</td><td>?</td>
+            </tr>
+            <tr id="earthlyBranches"> <td>?</td><td>?</td><td>?</td><td>?</td>
+            </tr>
+        </table>
+        <p id="interpretation" style="line-height: 1.6; color: #444; margin-top: 15px;"></p>
+    </div>
+</div>
+
+<script>
+    function calculateSaju() {
+        const name = document.getElementById('userName').value;
+        const birth = document.getElementById('birthDate').value;
+        
+        if(!name || !birth) {
+            alert("이름과 생년월일을 입력해주세요!");
+            return;
+        }
+
+        // 결과 영역 표시
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('resultTitle').innerText = `${name}님의 사주 결과`;
+        
+        // 실제 로직 연동 전 샘플 데이터 (임시)
+        document.getElementById('heavenlyStems').innerHTML = `<td>庚</td><td>戊</td><td>丙</td><td>甲</td>`;
+        document.getElementById('earthlyBranches').innerHTML = `<td>辰</td><td>午</td><td>寅</td><td>子</td>`;
+        
+        document.getElementById('interpretation').innerText = 
+            "현재는 샘플 데이터입니다. 실제 사주를 계산하려면 공공데이터 포털의 만세력 API나 변환 라이브러리를 연결해야 합니다. 당신은 따뜻한 태양의 기운을 타고나셨군요!";
+    }
+</script>
+
 </body>
 </html>
