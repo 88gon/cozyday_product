@@ -54,28 +54,8 @@
     </div>
 </div>
 
-<script>
-    function calculateSaju() {
-        const name = document.getElementById('userName').value;
-        const birth = document.getElementById('birthDate').value;
-        
-        if(!name || !birth) {
-            alert("이름과 생년월일을 입력해주세요!");
-            return;
-        }
-
-        // 결과 영역 표시
-        document.getElementById('result').style.display = 'block';
-        document.getElementById('resultTitle').innerText = `${name}님의 사주 결과`;
-        
-        // 실제 로직 연동 전 샘플 데이터 (임시)
-        document.getElementById('heavenlyStems').innerHTML = `<td>庚</td><td>戊</td><td>丙</td><td>甲</td>`;
-        document.getElementById('earthlyBranches').innerHTML = `<td>辰</td><td>午</td><td>寅</td><td>子</td>`;
-        
-        document.getElementById('interpretation').innerText = 
-            "현재는 샘플 데이터입니다. 실제 사주를 계산하려면 공공데이터 포털의 만세력 API나 변환 라이브러리를 연결해야 합니다. 당신은 따뜻한 태양의 기운을 타고나셨군요!";
-    }
-</script>
-
+<!-- 사주 라이브러리 (lunar-javascript) -->
+<script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
