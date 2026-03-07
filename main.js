@@ -1,13 +1,18 @@
 
-// Firebase 초기화
+// Firebase 초기화 (Modular SDK 방식)
 const firebaseConfig = {
     projectId: "cozyday-product",
 };
-firebase.initializeApp(firebaseConfig);
-const functions = firebase.functions();
 
-// 페이지 로드 시 셀렉트 박스 옵션 생성
+let app, functions, analyzeSaju;
+
+// 페이지 로드 시 셀렉트 박스 옵션 및 Firebase 초기화
 window.onload = function() {
+    const { initializeApp, getFunctions, httpsCallable } = window.firebaseModules;
+    app = initializeApp(firebaseConfig);
+    functions = getFunctions(app);
+    analyzeSaju = httpsCallable(functions, 'analyzeSaju');
+
     const yearSelect = document.getElementById('birthYear');
     const monthSelect = document.getElementById('birthMonth');
     const daySelect = document.getElementById('birthDay');
@@ -16,49 +21,24 @@ window.onload = function() {
 
     if (!yearSelect) return;
 
-    // 연도: 1930 ~ 현재
     const currentYear = new Date().getFullYear();
     for (let i = currentYear; i >= 1930; i--) {
         yearSelect.add(new Option(i + '년', i));
     }
-    // 월: 1 ~ 12
     for (let i = 1; i <= 12; i++) {
         monthSelect.add(new Option(i + '월', i));
     }
-    // 일: 1 ~ 31
     for (let i = 1; i <= 31; i++) {
         daySelect.add(new Option(i + '일', i));
     }
-    // 시: 0 ~ 23
     for (let i = 0; i <= 23; i++) {
         hourSelect.add(new Option(i + '시', i));
     }
-    // 분: 0 ~ 59
     for (let i = 0; i <= 59; i++) {
         minuteSelect.add(new Option(i + '분', i));
     }
-
-    // 기본값 설정 (예: 1990년 1월 1일)
     yearSelect.value = 1990;
 };
-
-async function getGeminiFortune(sajuData) {
-    try {
-        const analyzeSaju = functions.httpsCallable('analyzeSaju');
-        const result = await analyzeSaju({
-            userGender: sajuData.userGender,
-            saju8Chars: sajuData.saju8Chars,
-            currentDaewun: sajuData.currentDaewun,
-            currentSewun: sajuData.currentSewun
-        });
-        
-        return result.data.analysisResult;
-
-    } catch (error) {
-        console.error('Gemini 운세 분석 중 오류 발생:', error);
-        throw error;
-    }
-}
 
 async function calculateSaju() {
     const name = document.getElementById('userName').value;
@@ -128,24 +108,17 @@ async function calculateSaju() {
     progressBar.style.width = '0%';
     progressBar.innerText = '0%';
 
-    // 1. 만세력 라이브러리에서 천간/지지 8글자 추출 (기존 코드 유지)
+    // 1. 만세력 라이브러리에서 천간/지지 8글자 추출
     const saju8Chars = `${yearPillar} ${monthPillar} ${dayPillar} ${timePillar}`;
 
-    // 2. 에러 방지를 위해 테스트용 고정값 사용
+    // 2. 테스트용 고정값 사용
     const currentDaewun = "현재 대운 파악 중"; 
     const currentSewun = "2026년 丙午년";
 
-    // 3. 성별 데이터 (화면 선택값 반영)
+    // 3. 성별 데이터
     const userGender = gender === 1 ? "건명 (남성)" : "곤명 (여성)";
 
-    const sajuData = {
-        userGender: userGender,
-        saju8Chars: saju8Chars,
-        currentDaewun: currentDaewun,
-        currentSewun: currentSewun
-    };
-
-    // 프로그레스 바 애니메이션 & API 호출
+    // 프로그레스 바 애니메이션
     let progress = 0;
     const progressInterval = setInterval(() => {
         if (progress < 90) {
@@ -157,9 +130,19 @@ async function calculateSaju() {
     }, 300);
 
     try {
-        const geminiFortune = await getGeminiFortune(sajuData);
+        console.log("제미나이에게 사주 분석을 요청합니다...");
         
-        // 성공 시 100% 채우기
+        // Firebase 함수 호출 (analyzeSaju 사용)
+        const result = await analyzeSaju({
+            userGender: userGender,
+            saju8Chars: saju8Chars,
+            currentDaewun: currentDaewun,
+            currentSewun: currentSewun
+        });
+
+        const finalText = result.data.analysisResult;
+        console.log("분석 완료!", finalText);
+
         clearInterval(progressInterval);
         progressBar.style.width = '100%';
         progressBar.innerText = '100%';
@@ -167,15 +150,16 @@ async function calculateSaju() {
         setTimeout(() => {
             progressContainer.style.display = 'none';
             loadingText.style.display = 'none';
-            geminiInterpretationElem.innerHTML = marked.parse ? marked.parse(geminiFortune) : geminiFortune.replace(/\n/g, '<br>');
+            geminiInterpretationElem.innerHTML = marked.parse(finalText);
             geminiInterpretationElem.style.display = 'block';
         }, 500);
 
     } catch (error) {
+        console.error("제미나이 연결 중 에러 발생:", error);
         clearInterval(progressInterval);
         progressContainer.style.display = 'none';
         loadingText.style.display = 'none';
-        geminiInterpretationElem.innerText = "운세 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요. (" + error.message + ")";
+        geminiInterpretationElem.innerText = "분석 중 서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요. (" + error.message + ")";
         geminiInterpretationElem.style.display = 'block';
     }
 }
