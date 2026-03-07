@@ -14,6 +14,8 @@ window.onload = function() {
     const hourSelect = document.getElementById('birthHour');
     const minuteSelect = document.getElementById('birthMinute');
 
+    if (!yearSelect) return;
+
     // 연도: 1930 ~ 현재
     const currentYear = new Date().getFullYear();
     for (let i = currentYear; i >= 1930; i--) {
@@ -126,8 +128,8 @@ async function calculateSaju() {
     progressBar.style.width = '0%';
     progressBar.innerText = '0%';
 
-    // 대운 계산
-    const daewuns = saju.getDaewun(gender);
+    // 대운 계산 (Lunar 객체에서 호출해야 함)
+    const daewuns = lunar.getDaewun(gender);
     const currentYear = new Date().getFullYear();
     let currentDaewunName = "알 수 없음";
     
@@ -151,12 +153,12 @@ async function calculateSaju() {
     let progress = 0;
     const progressInterval = setInterval(() => {
         if (progress < 90) {
-            progress += Math.random() * 5;
+            progress += Math.random() * 10;
             if (progress > 90) progress = 90;
             progressBar.style.width = progress + '%';
             progressBar.innerText = Math.floor(progress) + '%';
         }
-    }, 500);
+    }, 300);
 
     try {
         const geminiFortune = await getGeminiFortune(sajuData);
@@ -169,7 +171,7 @@ async function calculateSaju() {
         setTimeout(() => {
             progressContainer.style.display = 'none';
             loadingText.style.display = 'none';
-            geminiInterpretationElem.innerText = geminiFortune;
+            geminiInterpretationElem.innerHTML = marked.parse ? marked.parse(geminiFortune) : geminiFortune.replace(/\n/g, '<br>');
             geminiInterpretationElem.style.display = 'block';
         }, 500);
 
