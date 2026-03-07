@@ -1,4 +1,29 @@
-function calculateSaju() {
+
+async function getGeminiFortune(sajuData) {
+    try {
+        // 백엔드에 사주 데이터를 보내고 Gemini 분석 결과를 받아옵니다.
+        const response = await fetch('/api/fortune', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(sajuData),
+        });
+
+        if (!response.ok) {
+            throw new Error('네트워크 응답이 올바르지 않습니다.');
+        }
+
+        const data = await response.json();
+        return data.fortune;
+
+    } catch (error) {
+        console.error('Gemini 운세 분석 중 오류 발생:', error);
+        return "운세 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+    }
+}
+
+async function calculateSaju() {
     const name = document.getElementById('userName').value;
     const birth = document.getElementById('birthDate').value;
     const time = document.getElementById('birthTime').value || "00:00";
@@ -11,7 +36,6 @@ function calculateSaju() {
     const [year, month, day] = birth.split('-').map(Number);
     const [hour, minute] = time.split(':').map(Number);
 
-    // lunar-javascript 사용 (CDN으로 로드된 Solar, Lunar 전역 객체 사용)
     const solar = Solar.fromYmdHms(year, month, day, hour, minute, 0);
     const lunar = solar.getLunar();
     const saju = lunar.getEightChar();
@@ -21,11 +45,9 @@ function calculateSaju() {
     const dayPillar = saju.getDay();
     const timePillar = saju.getTime();
 
-    // 결과 영역 표시
     document.getElementById('result').style.display = 'block';
     document.getElementById('resultTitle').innerText = `${name}님의 사주 결과`;
     
-    // 천간과 지지 분리하여 테이블에 삽입 (시-일-월-년 순서)
     document.getElementById('heavenlyStems').innerHTML = `
         <td>${timePillar[0]}</td>
         <td>${dayPillar[0]}</td>
@@ -53,6 +75,23 @@ function calculateSaju() {
         '癸': '계수(癸水): 맑은 샘물처럼 깨끗하고 적응력이 뛰어납니다.'
     };
 
-    document.getElementById('interpretation').innerText = 
-        `${name}님의 일주는 '${dayPillar}'이며, 본연의 기운은 '${dayStem}'입니다. ${descriptions[dayStem] || '자세한 분석은 전문가와 상담하세요.'}`;
+    const basicInterpretation = `${name}님의 일주는 '${dayPillar}'이며, 본연의 기운은 '${dayStem}'입니다. ${descriptions[dayStem] || '자세한 분석은 전문가와 상담하세요.'}`;
+    document.getElementById('interpretation').innerText = basicInterpretation;
+
+    // Gemini 운세 분석 로딩 표시
+    const geminiInterpretationElem = document.getElementById('geminiInterpretation');
+    geminiInterpretationElem.innerText = "Gemini가 당신의 운세를 분석하고 있습니다...";
+
+    // 사주 데이터 객체 생성
+    const sajuData = {
+        name: name,
+        yearPillar: yearPillar.join(''),
+        monthPillar: monthPillar.join(''),
+        dayPillar: dayPillar.join(''),
+        timePillar: timePillar.join('')
+    };
+
+    // Gemini 운세 분석 요청
+    const geminiFortune = await getGeminiFortune(sajuData);
+    geminiInterpretationElem.innerText = geminiFortune;
 }

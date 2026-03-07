@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>나의 운명 - 사주 분석</title>
     <style>
-        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: #f9f6f2; display: flex; justify-content: center; padding: 50px; }
+        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: #f9f6f2; display: flex; flex-direction: column; align-items: center; padding: 50px; }
         .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
         h2 { color: #5d4037; text-align: center; }
         .input-group { margin-bottom: 15px; }
@@ -16,6 +16,9 @@
         .saju-table { width: 100%; text-align: center; border-collapse: collapse; margin-top: 10px; }
         .saju-table th, .saju-table td { border: 1px solid #ddd; padding: 10px; }
         .saju-table th { background-color: #fdf5e6; }
+        #geminiInterpretation { background-color: #f0f8ff; border-left: 4px solid #4a90e2; padding: 15px; margin-top: 20px; line-height: 1.7; color: #333; }
+        .inquiry-container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-top: 30px; }
+        textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; height: 100px; resize: none; }
     </style>
 </head>
 <body>
@@ -51,7 +54,27 @@
             </tr>
         </table>
         <p id="interpretation" style="line-height: 1.6; color: #444; margin-top: 15px;"></p>
+        <div id="geminiInterpretation"></div>
     </div>
+</div>
+
+<div class="inquiry-container">
+    <h2>🤝 제휴 문의</h2>
+    <form action="https://formspree.io/f/xbdzjvzp" method="POST">
+        <div class="input-group">
+            <label>성함 / 기업명</label>
+            <input type="text" name="name" placeholder="성함 또는 기업명을 입력해주세요" required>
+        </div>
+        <div class="input-group">
+            <label>이메일 주소</label>
+            <input type="email" name="_replyto" placeholder="답변받으실 이메일을 입력해주세요" required>
+        </div>
+        <div class="input-group">
+            <label>문의 내용</label>
+            <textarea name="message" placeholder="제휴 관련 내용을 상세히 적어주세요" required></textarea>
+        </div>
+        <button type="submit">문의 보내기</button>
+    </form>
 </div>
 
 <!-- 사주 라이브러리 (lunar-javascript) -->
