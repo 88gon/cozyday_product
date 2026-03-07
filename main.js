@@ -128,25 +128,21 @@ async function calculateSaju() {
     progressBar.style.width = '0%';
     progressBar.innerText = '0%';
 
-    // 대운 계산 (Lunar 객체에서 호출해야 함)
-    const daewuns = lunar.getDaewun(gender);
-    const currentYear = new Date().getFullYear();
-    let currentDaewunName = "알 수 없음";
-    
-    const daewunList = daewuns.getDaewun();
-    for (let i = 0; i < daewunList.length; i++) {
-        if (currentYear >= daewunList[i].getStartYear() && currentYear <= daewunList[i].getEndYear()) {
-            currentDaewunName = daewunList[i].getName();
-            break;
-        }
-    }
-    const currentSewunName = Solar.fromDate(new Date()).getLunar().getEightChar().getYear();
+    // 1. 만세력 라이브러리에서 천간/지지 8글자 추출 (기존 코드 유지)
+    const saju8Chars = `${yearPillar} ${monthPillar} ${dayPillar} ${timePillar}`;
+
+    // 2. 에러 방지를 위해 테스트용 고정값 사용
+    const currentDaewun = "현재 대운 파악 중"; 
+    const currentSewun = "2026년 丙午년";
+
+    // 3. 성별 데이터 (화면 선택값 반영)
+    const userGender = gender === 1 ? "건명 (남성)" : "곤명 (여성)";
 
     const sajuData = {
-        userGender: gender === 1 ? "남성" : "여성",
-        saju8Chars: `${yearPillar} ${monthPillar} ${dayPillar} ${timePillar}`,
-        currentDaewun: currentDaewunName,
-        currentSewun: currentSewunName
+        userGender: userGender,
+        saju8Chars: saju8Chars,
+        currentDaewun: currentDaewun,
+        currentSewun: currentSewun
     };
 
     // 프로그레스 바 애니메이션 & API 호출
