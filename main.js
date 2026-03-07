@@ -54,7 +54,7 @@ async function getGeminiFortune(sajuData) {
 
     } catch (error) {
         console.error('Gemini 운세 분석 중 오류 발생:', error);
-        return "운세 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요. (" + error.message + ")";
+        throw error;
     }
 }
 
@@ -114,16 +114,23 @@ async function calculateSaju() {
     const basicInterpretation = `${name}님의 일주는 '${dayPillar}'이며, 본연의 기운은 '${dayStem}'입니다. ${descriptions[dayStem] || '자세한 분석은 전문가와 상담하세요.'}`;
     document.getElementById('interpretation').innerText = basicInterpretation;
 
-    // Gemini 운세 분석 로딩 표시
+    // UI 요소 초기화
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const loadingText = document.getElementById('loadingText');
     const geminiInterpretationElem = document.getElementById('geminiInterpretation');
-    geminiInterpretationElem.innerText = "Gemini가 당신의 운세를 분석하고 있습니다...";
+
+    progressContainer.style.display = 'block';
+    loadingText.style.display = 'block';
+    geminiInterpretationElem.style.display = 'none';
+    progressBar.style.width = '0%';
+    progressBar.innerText = '0%';
 
     // 대운 계산
     const daewuns = saju.getDaewun(gender);
     const currentYear = new Date().getFullYear();
     let currentDaewunName = "알 수 없음";
     
-    // 현재 대운 찾기
     const daewunList = daewuns.getDaewun();
     for (let i = 0; i < daewunList.length; i++) {
         if (currentYear >= daewunList[i].getStartYear() && currentYear <= daewunList[i].getEndYear()) {
@@ -131,11 +138,8 @@ async function calculateSaju() {
             break;
         }
     }
-
-    // 세운 계산 (올해)
     const currentSewunName = Solar.fromDate(new Date()).getLunar().getEightChar().getYear();
 
-    // 사주 데이터 객체 생성
     const sajuData = {
         userGender: gender === 1 ? "남성" : "여성",
         saju8Chars: `${yearPillar} ${monthPillar} ${dayPillar} ${timePillar}`,
@@ -143,7 +147,37 @@ async function calculateSaju() {
         currentSewun: currentSewunName
     };
 
-    // Gemini 운세 분석 요청
-    const geminiFortune = await getGeminiFortune(sajuData);
-    geminiInterpretationElem.innerText = geminiFortune;
+    // 프로그레스 바 애니메이션 & API 호출
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        if (progress < 90) {
+            progress += Math.random() * 5;
+            if (progress > 90) progress = 90;
+            progressBar.style.width = progress + '%';
+            progressBar.innerText = Math.floor(progress) + '%';
+        }
+    }, 500);
+
+    try {
+        const geminiFortune = await getGeminiFortune(sajuData);
+        
+        // 성공 시 100% 채우기
+        clearInterval(progressInterval);
+        progressBar.style.width = '100%';
+        progressBar.innerText = '100%';
+
+        setTimeout(() => {
+            progressContainer.style.display = 'none';
+            loadingText.style.display = 'none';
+            geminiInterpretationElem.innerText = geminiFortune;
+            geminiInterpretationElem.style.display = 'block';
+        }, 500);
+
+    } catch (error) {
+        clearInterval(progressInterval);
+        progressContainer.style.display = 'none';
+        loadingText.style.display = 'none';
+        geminiInterpretationElem.innerText = "운세 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요. (" + error.message + ")";
+        geminiInterpretationElem.style.display = 'block';
+    }
 }
