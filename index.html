@@ -31,11 +31,25 @@
     </div>
     <div class="input-group">
         <label>생년월일</label>
-        <input type="date" id="birthDate">
+        <div style="display: flex; gap: 5px;">
+            <select id="birthYear" style="flex: 2;"></select>
+            <select id="birthMonth" style="flex: 1;"></select>
+            <select id="birthDay" style="flex: 1;"></select>
+        </div>
+    </div>
+    <div class="input-group">
+        <label>성별</label>
+        <select id="userGender">
+            <option value="1">남성 (乾命)</option>
+            <option value="0">여성 (坤命)</option>
+        </select>
     </div>
     <div class="input-group">
         <label>태어난 시간</label>
-        <input type="time" id="birthTime">
+        <div style="display: flex; gap: 5px;">
+            <select id="birthHour" style="flex: 1;"></select>
+            <select id="birthMinute" style="flex: 1;"></select>
+        </div>
     </div>
     <button onclick="calculateSaju()">운세 확인하기</button>
 
@@ -76,6 +90,10 @@
         <button type="submit">문의 보내기</button>
     </form>
 </div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-functions-compat.js"></script>
 
 <!-- 사주 라이브러리 (lunar-javascript) -->
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
