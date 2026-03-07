@@ -85,10 +85,10 @@ async function calculateSaju() {
     // 사주 데이터 객체 생성
     const sajuData = {
         name: name,
-        yearPillar: yearPillar.join(''),
-        monthPillar: monthPillar.join(''),
-        dayPillar: dayPillar.join(''),
-        timePillar: timePillar.join('')
+        yearPillar: yearPillar,
+        monthPillar: monthPillar,
+        dayPillar: dayPillar,
+        timePillar: timePillar
     };
 
     // Gemini 운세 분석 요청
