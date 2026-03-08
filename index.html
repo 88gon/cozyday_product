@@ -76,11 +76,7 @@
     </div>
     <div class="input-group">
         <label>생년월일</label>
-        <div style="display: flex; gap: 5px;">
-            <select id="birthYear" style="flex: 2;"></select>
-            <select id="birthMonth" style="flex: 1;"></select>
-            <select id="birthDay" style="flex: 1;"></select>
-        </div>
+        <input type="date" id="birthDate" value="1990-01-01">
     </div>
     <div class="input-group">
         <label>성별</label>
@@ -91,10 +87,7 @@
     </div>
     <div class="input-group">
         <label>태어난 시간</label>
-        <div style="display: flex; gap: 5px;">
-            <select id="birthHour" style="flex: 1;"></select>
-            <select id="birthMinute" style="flex: 1;"></select>
-        </div>
+        <input type="time" id="birthTime" value="12:00">
     </div>
     <button onclick="calculateSaju()">운세 확인하기</button>
 

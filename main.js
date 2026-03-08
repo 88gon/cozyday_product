@@ -1,31 +1,7 @@
 
-// 페이지 로드 시 셀렉트 박스 옵션 및 초기 설정
+// 페이지 로드 시 초기 설정
 window.onload = function() {
-  const yearSelect = document.getElementById('birthYear');
-  const monthSelect = document.getElementById('birthMonth');
-  const daySelect = document.getElementById('birthDay');
-  const hourSelect = document.getElementById('birthHour');
-  const minuteSelect = document.getElementById('birthMinute');
-
-  if (!yearSelect) return;
-
-  const currentYear = new Date().getFullYear();
-  for (let i = currentYear; i >= 1930; i--) {
-      yearSelect.add(new Option(i + '년', i));
-  }
-  for (let i = 1; i <= 12; i++) {
-      monthSelect.add(new Option(i + '월', i));
-  }
-  for (let i = 1; i <= 31; i++) {
-      daySelect.add(new Option(i + '일', i));
-  }
-  for (let i = 0; i <= 23; i++) {
-      hourSelect.add(new Option(i + '시', i));
-  }
-  for (let i = 0; i <= 59; i++) {
-      minuteSelect.add(new Option(i + '분', i));
-  }
-  yearSelect.value = 1990;
+  // 기존 셀렉트 박스 옵션 생성 로직 제거 (Native Picker 사용)
 };
 
 // 사주 계산 및 결과 출력 메인 함수
@@ -36,12 +12,17 @@ function calculateSaju() {
       return;
   }
 
-  // 사용자가 입력한 생년월일시 가져오기
-  const year = parseInt(document.getElementById('birthYear').value);
-  const month = parseInt(document.getElementById('birthMonth').value);
-  const day = parseInt(document.getElementById('birthDay').value);
-  const hour = parseInt(document.getElementById('birthHour').value);
-  const minute = parseInt(document.getElementById('birthMinute').value);
+  // 사용자가 입력한 날짜 및 시간 가져오기 (YYYY-MM-DD, HH:mm)
+  const birthDate = document.getElementById('birthDate').value;
+  const birthTime = document.getElementById('birthTime').value;
+
+  if(!birthDate || !birthTime) {
+      alert("생년월일과 시간을 정확히 선택해주세요!");
+      return;
+  }
+
+  const [year, month, day] = birthDate.split('-').map(Number);
+  const [hour, minute] = birthTime.split(':').map(Number);
 
   // 만세력 변환
   const solar = Solar.fromYmdHms(year, month, day, hour, minute, 0);
