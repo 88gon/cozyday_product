@@ -10,17 +10,34 @@
      crossorigin="anonymous"></script>
     <meta name="google-adsense-account" content="ca-pub-6869816602894526">
     <style>
-        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: #f9f6f2; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; }
-        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; position: relative; }
+        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: #f9f6f2; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; box-sizing: border-box; }
+        
         .tiger-greeting { background: #5d4037; color: #fdf5e6; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.95em; position: relative; line-height: 1.5; }
         .tiger-greeting::after { content: ''; position: absolute; bottom: -10px; left: 30px; border-width: 10px 10px 0; border-style: solid; border-color: #5d4037 transparent; }
-        h2 { color: #5d4037; text-align: center; margin-top: 0; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #8d6e63; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        
+        h2 { color: #5d4037; text-align: center; margin-top: 0; margin-bottom: 25px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #5d4037; }
+        input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        
+        /* 롤링 피커 스타일 */
+        .rolling-picker-group { display: flex; gap: 5px; background: #fdf5e6; border-radius: 10px; padding: 5px; border: 1px solid #ddd; height: 120px; overflow: hidden; position: relative; }
+        .rolling-picker-group::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 40px; background: linear-gradient(to bottom, rgba(253,245,230,1), rgba(253,245,230,0)); pointer-events: none; z-index: 2; }
+        .rolling-picker-group::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(to top, rgba(253,245,230,1), rgba(253,245,230,0)); pointer-events: none; z-index: 2; }
+        
+        .rolling-picker { flex: 1; overflow-y: scroll; scroll-snap-type: y mandatory; -ms-overflow-style: none; scrollbar-width: none; }
+        .rolling-picker::-webkit-scrollbar { display: none; }
+        
+        .picker-item { height: 40px; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; font-size: 1em; color: #aaa; transition: all 0.2s; }
+        .picker-item.active { color: #5d4037; font-weight: bold; font-size: 1.1em; }
+        
+        .selection-bar { position: absolute; top: 40px; left: 5px; right: 5px; height: 40px; border-top: 1px solid #8d6e63; border-bottom: 1px solid #8d6e63; pointer-events: none; z-index: 1; }
+
+        button { width: 100%; padding: 15px; background-color: #8d6e63; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; transition: background 0.3s; }
         button:hover { background-color: #6d4c41; }
-        #result { margin-top: 25px; display: none; border-top: 2px solid #eee; padding-top: 20px; }
+
+        #result { margin-top: 30px; display: none; border-top: 2px solid #eee; padding-top: 20px; }
         
         /* 로딩 애니메이션 스타일 */
         .loading-area { display: none; text-align: center; padding: 30px 0; }
@@ -30,102 +47,85 @@
             50% { transform: translateY(-20px) rotate(5deg); }
         }
         .loading-brand { font-size: 22px; font-weight: bold; color: #8d6e63; margin-bottom: 8px; }
-        .loading-msg { color: #aaa; font-size: 14px; }
+        .loading-msg { color: #888; font-size: 14px; line-height: 1.5; padding: 0 20px; }
 
-        /* 핵심 요약 및 아코디언(접기/펴기) UI 스타일 */
-.core-summary { background-color: #5d4037; color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px; text-align: center; line-height: 1.6; }
-.core-summary h3 { margin: 0 0 10px 0; color: #fdf5e6; }
-.core-summary .tags { color: #d7ccc8; font-size: 0.9em; margin-bottom: 15px; }
-.accordion-item { border: 1px solid #ddd; margin-bottom: 10px; border-radius: 8px; overflow: hidden; }
-.accordion-header { background-color: #fdf5e6; padding: 15px; cursor: pointer; font-weight: bold; color: #5d4037; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s; }
-.accordion-header:hover { background-color: #f5ebd9; }
-.accordion-header::after { content: '▼'; font-size: 0.8em; transition: transform 0.3s; }
-.accordion-header.active::after { transform: rotate(180deg); }
+        /* 핵심 요약 및 아코디언 스타일 */
+        .core-summary { background-color: #5d4037; color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px; text-align: center; line-height: 1.6; }
+        .core-summary h3 { margin: 0 0 10px 0; color: #fdf5e6; }
+        .core-summary .tags { color: #d7ccc8; font-size: 0.9em; margin-bottom: 15px; }
+        .accordion-item { border: 1px solid #ddd; margin-bottom: 10px; border-radius: 8px; overflow: hidden; }
+        .accordion-header { background-color: #fdf5e6; padding: 15px; cursor: pointer; font-weight: bold; color: #5d4037; display: flex; justify-content: space-between; align-items: center; }
+        .accordion-header::after { content: '▼'; font-size: 0.8em; }
+        .accordion-header.active::after { transform: rotate(180deg); }
         .accordion-content { padding: 15px; display: none; background-color: white; line-height: 1.6; font-size: 0.95em; color: #333; border-top: 1px solid #ddd; }
 
-        /* MBTI 소울메이트 섹션 스타일 */
         .soulmate-section { margin-top: 30px; padding: 20px; background-color: #fffaf0; border: 2px dashed #8d6e63; border-radius: 15px; text-align: center; }
-        .soulmate-title { font-weight: bold; color: #5d4037; margin-bottom: 15px; font-size: 1.1em; }
+        .soulmate-title { font-weight: bold; color: #5d4037; margin-bottom: 15px; }
         .soulmate-character { font-size: 50px; margin-bottom: 10px; display: block; animation: float 3s infinite ease-in-out; }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         .soulmate-info { background: white; padding: 10px; border-radius: 10px; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .soulmate-mbti { font-weight: bold; color: #e67e22; font-size: 1.2em; }
-        .soulmate-desc { font-size: 0.9em; color: #666; margin-top: 5px; }
 
-        /* 푸터 스타일 */
         footer { margin-top: 50px; padding: 20px; text-align: center; font-size: 0.85em; color: #888; border-top: 1px solid #eee; width: 100%; max-width: 500px; }
         footer a { color: #888; text-decoration: none; margin: 0 10px; }
-        footer a:hover { text-decoration: underline; color: #5d4037; }
-        .copyright { margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="tiger-greeting" id="tigerIntro">
+    <div class="tiger-greeting">
         <strong>🐯 호랑이 수호신:</strong><br>
         "뭐야, 또 인생이 맘대로 안 풀려서 왔냐? ...일단 앉아봐. 찬찬히 들여다보게."
     </div>
     <h2>✨ 사주팔자 분석</h2>
+    
     <div class="input-group">
         <label>이름</label>
         <input type="text" id="userName" placeholder="이름을 입력하세요">
     </div>
+
     <div class="input-group">
         <label>생년월일</label>
         <div class="rolling-picker-group">
+            <div class="selection-bar"></div>
             <div class="rolling-picker" id="yearPicker"></div>
             <div class="rolling-picker" id="monthPicker"></div>
             <div class="rolling-picker" id="dayPicker"></div>
         </div>
     </div>
+
     <div class="input-group">
         <label>성별</label>
         <div class="rolling-picker-group">
+            <div class="selection-bar"></div>
             <div class="rolling-picker" id="genderPicker">
-                <div class="picker-item" data-value="1">남성 (乾命)</div>
+                <div class="picker-item"></div>
+                <div class="picker-item active" data-value="1">남성 (乾命)</div>
                 <div class="picker-item" data-value="0">여성 (坤命)</div>
+                <div class="picker-item"></div>
             </div>
         </div>
     </div>
+
     <div class="input-group">
         <label>태어난 시간</label>
         <div class="rolling-picker-group">
+            <div class="selection-bar"></div>
             <div class="rolling-picker" id="hourPicker"></div>
             <div class="rolling-picker" id="minutePicker"></div>
         </div>
     </div>
+
     <button onclick="calculateSaju()">운세 확인하기</button>
 
     <div id="result">
-    ...
-        <div id="resultArea"></div>
-    </div>
-    </div>
-
-    <style>
-    /* 롤링 피커 스타일 */
-    .rolling-picker-group { display: flex; gap: 5px; background: #fdf5e6; border-radius: 10px; padding: 10px; border: 1px solid #ddd; height: 120px; overflow: hidden; position: relative; }
-    .rolling-picker-group::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 40px; background: linear-gradient(to bottom, rgba(253,245,230,1), rgba(253,245,230,0)); pointer-events: none; z-index: 2; }
-    .rolling-picker-group::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(to top, rgba(253,245,230,1), rgba(253,245,230,0)); pointer-events: none; z-index: 2; }
-
-    .rolling-picker { flex: 1; overflow-y: scroll; scroll-snap-type: y mandatory; -ms-overflow-style: none; scrollbar-width: none; }
-    .rolling-picker::-webkit-scrollbar { display: none; }
-
-    .picker-item { height: 40px; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; font-size: 1.1em; color: #aaa; transition: all 0.2s; }
-    .picker-item.active { color: #5d4037; font-weight: bold; font-size: 1.2em; }
-
-    .selection-bar { position: absolute; top: 40px; left: 5px; right: 5px; height: 40px; border-top: 1px solid #8d6e63; border-bottom: 1px solid #8d6e63; pointer-events: none; z-index: 1; }
-    </style>
+        <h3 id="resultTitle" style="text-align: center;"></h3>
+        <div id="sajuTable"></div>
         <div id="loadingArea" class="loading-area">
             <div class="tiger-character">🐯</div>
             <div class="loading-brand">49사주</div>
             <div class="loading-msg">당신의 운명을 읽어보고 있어요...</div>
         </div>
-
         <div id="resultArea"></div>
     </div>
 </div>
@@ -136,9 +136,7 @@
         <a href="privacy.html">개인정보처리방침</a> |
         <a href="contact.html">문의하기</a>
     </div>
-    <div class="copyright">
-        &copy; 2026 49사주. All rights reserved.
-    </div>
+    <p>&copy; 2026 49사주. All rights reserved.</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
