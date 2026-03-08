@@ -47,10 +47,10 @@ function calculateSaju() {
     const lunar = solar.getLunar();
     const saju = lunar.getEightChar();
     
-    const yearPillar = saju.getYear();  // 년주
-    const monthPillar = saju.getMonth(); // 월주
-    const dayPillar = saju.getDay();   // 일주
-    const hourPillar = saju.getHour();  // 시주
+    const yearPillar = saju.getYear().toString();  // 년주
+    const monthPillar = saju.getMonth().toString(); // 월주
+    const dayPillar = saju.getDay().toString();   // 일주
+    const hourPillar = saju.getHour().toString();  // 시주
 
     // 결과창 초기 노출
     document.getElementById('result').style.display = 'block';
