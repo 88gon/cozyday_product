@@ -1,8 +1,79 @@
 
 // 페이지 로드 시 초기 설정
 window.onload = function() {
-  // 기본 설정 (필요 시 추가)
+  initRollingPickers();
 };
+
+function initRollingPickers() {
+  const yearPicker = document.getElementById('yearPicker');
+  const monthPicker = document.getElementById('monthPicker');
+  const dayPicker = document.getElementById('dayPicker');
+  const hourPicker = document.getElementById('hourPicker');
+  const minutePicker = document.getElementById('minutePicker');
+  const genderPicker = document.getElementById('genderPicker');
+
+  if (!yearPicker) return;
+
+  // 년 (1930 - 현재)
+  const currentYear = new Date().getFullYear();
+  populatePicker(yearPicker, 1930, currentYear, currentYear - 1990);
+  // 월 (1 - 12)
+  populatePicker(monthPicker, 1, 12, 0);
+  // 일 (1 - 31)
+  populatePicker(dayPicker, 1, 31, 0);
+  // 시 (0 - 23)
+  populatePicker(hourPicker, 0, 23, 12);
+  // 분 (0 - 59)
+  populatePicker(minutePicker, 0, 59, 0);
+
+  // 모든 롤링 피커에 스크롤 이벤트 리스너 추가
+  document.querySelectorAll('.rolling-picker').forEach(picker => {
+    picker.addEventListener('scroll', () => updateActiveItem(picker));
+    // 초기 로드 시에도 active 설정
+    setTimeout(() => updateActiveItem(picker), 200);
+  });
+}
+
+function populatePicker(el, start, end, selectedIndex) {
+  let html = '<div class="picker-item"></div>'; // 상단 여백
+  for (let i = start; i <= end; i++) {
+    let unit = "";
+    if (el.id.includes('year')) unit = "년";
+    else if (el.id.includes('month')) unit = "월";
+    else if (el.id.includes('day')) unit = "일";
+    else if (el.id.includes('hour')) unit = "시";
+    else if (el.id.includes('minute')) unit = "분";
+    
+    html += `<div class="picker-item" data-value="${i}">${i}${unit}</div>`;
+  }
+  html += '<div class="picker-item"></div>'; // 하단 여백
+  el.innerHTML = html;
+  
+  // 기본 선택 위치로 스크롤
+  setTimeout(() => {
+    el.scrollTop = selectedIndex * 40;
+  }, 100);
+}
+
+function updateActiveItem(el) {
+  const items = el.querySelectorAll('.picker-item');
+  const scrollPos = el.scrollTop;
+  const index = Math.round(scrollPos / 40);
+  
+  items.forEach((item, i) => {
+    if (i === index + 1) item.classList.add('active');
+    else item.classList.remove('active');
+  });
+}
+
+function getPickerValue(id) {
+  const el = document.getElementById(id);
+  const scrollPos = el.scrollTop;
+  const index = Math.round(scrollPos / 40);
+  const items = el.querySelectorAll('.picker-item');
+  const activeItem = items[index + 1];
+  return activeItem ? activeItem.getAttribute('data-value') : null;
+}
 
 // 사주 계산 및 결과 출력 메인 함수
 function calculateSaju() {
@@ -12,18 +83,18 @@ function calculateSaju() {
       return;
   }
 
-  // 사용자가 입력한 날짜 및 시간 가져오기 (YYYY-MM-DD, HH:mm)
-  const birthDateValue = document.getElementById('birthDate').value;
-  const birthTimeValue = document.getElementById('birthTime').value;
-  const gender = document.getElementById('userGender').value;
+  // 롤링 피커에서 값 가져오기
+  const year = parseInt(getPickerValue('yearPicker'));
+  const month = parseInt(getPickerValue('monthPicker'));
+  const day = parseInt(getPickerValue('dayPicker'));
+  const hour = parseInt(getPickerValue('hourPicker'));
+  const minute = parseInt(getPickerValue('minutePicker'));
+  const gender = parseInt(getPickerValue('genderPicker'));
 
-  if(!birthDateValue || !birthTimeValue) {
-      alert("생년월일과 시간을 정확히 선택해주세요!");
+  if(!year || !month || !day) {
+      alert("생년월일을 정확히 선택해주세요!");
       return;
   }
-
-  const [year, month, day] = birthDateValue.split('-').map(Number);
-  const [hour, minute] = birthTimeValue.split(':').map(Number);
 
   // 만세력 변환
   const solar = Solar.fromYmdHms(year, month, day, hour, minute, 0);
