@@ -38,7 +38,13 @@
 .accordion-header:hover { background-color: #f5ebd9; }
 .accordion-header::after { content: '▼'; font-size: 0.8em; transition: transform 0.3s; }
 .accordion-header.active::after { transform: rotate(180deg); }
-.accordion-content { padding: 15px; display: none; background-color: white; line-height: 1.6; font-size: 0.95em; color: #333; border-top: 1px solid #ddd; }
+        .accordion-content { padding: 15px; display: none; background-color: white; line-height: 1.6; font-size: 0.95em; color: #333; border-top: 1px solid #ddd; }
+
+        /* 푸터 스타일 */
+        footer { margin-top: 50px; padding: 20px; text-align: center; font-size: 0.85em; color: #888; border-top: 1px solid #eee; width: 100%; max-width: 500px; }
+        footer a { color: #888; text-decoration: none; margin: 0 10px; }
+        footer a:hover { text-decoration: underline; color: #5d4037; }
+        .copyright { margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -106,6 +112,17 @@
         <button type="submit">문의 보내기</button>
     </form>
 </div>
+
+<footer>
+    <div class="footer-links">
+        <a href="about.html">서비스 소개</a> |
+        <a href="privacy.html">개인정보처리방침</a> |
+        <a href="contact.html">문의하기</a>
+    </div>
+    <div class="copyright">
+        &copy; 2026 49사주. All rights reserved.
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
 <script src="sajuData.js"></script>

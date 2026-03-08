@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>문의하기 - 49사주</title>
+    <style>
+        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: #f9f6f2; padding: 50px; line-height: 1.6; color: #333; }
+        .container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; }
+        h1 { color: #5d4037; text-align: center; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        textarea { height: 150px; resize: none; }
+        button { width: 100%; padding: 12px; background-color: #8d6e63; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        button:hover { background-color: #6d4c41; }
+        footer { margin-top: 50px; text-align: center; font-size: 0.85em; color: #888; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #8d6e63; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🤝 제휴 및 서비스 문의</h1>
+    <p style="text-align: center; font-size: 0.9em; color: #666; margin-bottom: 30px;">서비스 이용 불편 사항이나 제휴 문의를 남겨주세요.</p>
+    
+    <form action="https://formspree.io/f/xbdzjvzp" method="POST">
+        <div class="input-group">
+            <label>성함 / 기업명</label>
+            <input type="text" name="name" placeholder="성함 또는 기업명을 입력해주세요" required>
+        </div>
+        <div class="input-group">
+            <label>이메일 주소</label>
+            <input type="email" name="_replyto" placeholder="답변받으실 이메일을 입력해주세요" required>
+        </div>
+        <div class="input-group">
+            <label>문의 내용</label>
+            <textarea name="message" placeholder="문의 내용을 상세히 적어주세요" required></textarea>
+        </div>
+        <button type="submit">문의 보내기</button>
+    </form>
+
+    <a href="index.html" class="back-link">&larr; 메인으로 돌아가기</a>
+</div>
+<footer>
+    &copy; 2026 49사주. All rights reserved.
+</footer>
+</body>
+</html>
