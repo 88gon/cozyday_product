@@ -83,6 +83,26 @@ function calculateSaju() {
   // 일주(dayPillar)를 기준으로 DB에서 결과 찾기
   const resultData = sajuDatabase[dayPillar];
 
+  // MBTI 소울메이트 로직 (일간 기준 가벼운 매칭)
+  const dayGan = saju.getDayGan(); // 일간 (甲, 乙, ...)
+  let soulmateData = {
+    mbti: "ENFP",
+    char: "🌿",
+    desc: "당신의 성장을 응원해줄 자유로운 영혼"
+  };
+
+  if (["甲", "乙"].includes(dayGan)) { // 목(木) 기운
+    soulmateData = { mbti: "INFJ", char: "🌲", desc: "당신의 깊은 생각을 이해해줄 따뜻한 동반자" };
+  } else if (["丙", "丁"].includes(dayGan)) { // 화(火) 기운
+    soulmateData = { mbti: "ISFJ", char: "☀️", desc: "당신의 뜨거운 열정을 묵묵히 받아줄 쉼터" };
+  } else if (["戊", "己"].includes(dayGan)) { // 토(土) 기운
+    soulmateData = { mbti: "ESTP", char: "⛰️", desc: "당신의 단단한 내면을 일깨워줄 활동가" };
+  } else if (["庚", "辛"].includes(dayGan)) { // 금(金) 기운
+    soulmateData = { mbti: "ENFJ", char: "💎", desc: "당신의 날카로움을 부드럽게 감싸줄 리더" };
+  } else if (["壬", "癸"].includes(dayGan)) { // 수(水) 기운
+    soulmateData = { mbti: "INTP", char: "🌊", desc: "당신의 넓은 지혜를 함께 나눌 지적인 파트너" };
+  }
+
   // 결과 출력 영역 준비 및 로딩 애니메이션 켜기
   const resultArea = document.getElementById('resultArea');
   const loadingArea = document.getElementById('loadingArea');
@@ -116,6 +136,19 @@ function calculateSaju() {
               <p>${resultData.coreSummary}</p>
             </div>
             ${sectionsHtml}
+            
+            <!-- MBTI 소울메이트 섹션 -->
+            <div class="soulmate-section">
+              <div class="soulmate-title">💖 49사주가 추천하는 나의 소울메이트</div>
+              <span class="soulmate-character">${soulmateData.char}</span>
+              <div class="soulmate-info">
+                <div class="soulmate-mbti">${soulmateData.mbti} 성향</div>
+                <div class="soulmate-desc">${soulmateData.desc}</div>
+              </div>
+              <p style="font-size: 0.8em; color: #999; margin-top: 15px;">
+                *사주의 오행 기운을 바탕으로 분석한 찰떡궁합 성향입니다.
+              </p>
+            </div>
           `;
           resultArea.innerHTML = resultHtml;
       } else {
