@@ -112,14 +112,14 @@ function calculateSaju() {
 
   // 화면에 8글자 표 그리기
   const tableHtml = `
-    <div style="background-color: #f0f4f8; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
-      <h3 style="margin-top: 0;">나의 사주 팔자</h3>
+    <div style="background-color: #fff5e6; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ffcc80;">
+      <h3 style="margin-top: 0; color: #d35400;">나의 사주 팔자</h3>
       <table style="width: 100%; text-align: center; font-size: 1.2em; border-collapse: collapse;">
-        <tr style="border-bottom: 1px solid #ccc;">
+        <tr style="border-bottom: 1px solid #ffcc80; color: #a04000;">
           <th>시주(時)</th><th>일주(日)</th><th>월주(月)</th><th>년주(年)</th>
         </tr>
-        <tr style="font-weight: bold; padding-top: 10px;">
-          <td>${hourPillar}</td><td><span style="color: #e74c3c;">${dayPillar}</span></td><td>${monthPillar}</td><td>${yearPillar}</td>
+        <tr style="font-weight: bold; padding-top: 10px; color: #d35400;">
+          <td>${hourPillar}</td><td><span style="color: #e67e22;">${dayPillar}</span></td><td>${monthPillar}</td><td>${yearPillar}</td>
         </tr>
       </table>
     </div>
