@@ -94,19 +94,28 @@ function calculateSaju() {
       loadingArea.style.display = 'none';
 
       if (resultData) {
-          // DB에 데이터가 있을 경우
+          // DB에 데이터가 있을 경우 (새로운 아코디언 구조)
+          let sectionsHtml = '';
+          resultData.sections.forEach((section, index) => {
+            sectionsHtml += `
+              <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                  ${section.title}
+                </div>
+                <div class="accordion-content">
+                  ${section.content.replace(/\n/g, '<br>')}
+                </div>
+              </div>
+            `;
+          });
+
           const resultHtml = `
-            <h3>${resultData.title}</h3>
-            <p style="color: #666; font-size: 0.9em;">${resultData.tags.join(' ')}</p>
-            <hr>
-            <p><strong>내 사주의 핵심 요약:</strong></p>
-            <p>${resultData.description}</p>
-            <p><strong>상세 분석:</strong></p>
-            <p>${resultData.detail.replace(/\n/g, '<br>')}</p>
-            <div style="background-color: #f9f9f9; padding: 15px; margin-top: 20px; border-radius: 8px;">
-              <p><strong>💡 인생 개운법:</strong></p>
-              <p>${resultData.advice}</p>
+            <div class="core-summary">
+              <h3>${resultData.title}</h3>
+              <div class="tags">${resultData.tags.join(' ')}</div>
+              <p>${resultData.coreSummary}</p>
             </div>
+            ${sectionsHtml}
           `;
           resultArea.innerHTML = resultHtml;
       } else {
@@ -119,4 +128,15 @@ function calculateSaju() {
           `;
       }
   }, 1500);
+}
+
+// 아코디언 토글 함수
+function toggleAccordion(header) {
+  header.classList.toggle('active');
+  const content = header.nextElementSibling;
+  if (content.style.display === "block") {
+    content.style.display = "none";
+  } else {
+    content.style.display = "block";
+  }
 }

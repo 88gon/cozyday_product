@@ -25,6 +25,17 @@
         .loading-msg { color: #aaa; font-size: 14px; }
         .inquiry-container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-top: 30px; }
         textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; height: 100px; resize: none; }
+
+        /* 핵심 요약 및 아코디언(접기/펴기) UI 스타일 */
+.core-summary { background-color: #5d4037; color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px; text-align: center; line-height: 1.6; }
+.core-summary h3 { margin: 0 0 10px 0; color: #fdf5e6; }
+.core-summary .tags { color: #d7ccc8; font-size: 0.9em; margin-bottom: 15px; }
+.accordion-item { border: 1px solid #ddd; margin-bottom: 10px; border-radius: 8px; overflow: hidden; }
+.accordion-header { background-color: #fdf5e6; padding: 15px; cursor: pointer; font-weight: bold; color: #5d4037; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s; }
+.accordion-header:hover { background-color: #f5ebd9; }
+.accordion-header::after { content: '▼'; font-size: 0.8em; transition: transform 0.3s; }
+.accordion-header.active::after { transform: rotate(180deg); }
+.accordion-content { padding: 15px; display: none; background-color: white; line-height: 1.6; font-size: 0.95em; color: #333; border-top: 1px solid #ddd; }
     </style>
 </head>
 <body>
