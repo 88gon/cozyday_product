@@ -26,8 +26,6 @@
         }
         .loading-brand { font-size: 22px; font-weight: bold; color: #8d6e63; margin-bottom: 8px; }
         .loading-msg { color: #aaa; font-size: 14px; }
-        .inquiry-container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-top: 30px; }
-        textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; height: 100px; resize: none; }
 
         /* 핵심 요약 및 아코디언(접기/펴기) UI 스타일 */
 .core-summary { background-color: #5d4037; color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px; text-align: center; line-height: 1.6; }
@@ -92,25 +90,6 @@
 
         <div id="resultArea"></div>
     </div>
-</div>
-
-<div class="inquiry-container">
-    <h2>🤝 제휴 문의</h2>
-    <form action="https://formspree.io/f/xbdzjvzp" method="POST">
-        <div class="input-group">
-            <label>성함 / 기업명</label>
-            <input type="text" name="name" placeholder="성함 또는 기업명을 입력해주세요" required>
-        </div>
-        <div class="input-group">
-            <label>이메일 주소</label>
-            <input type="email" name="_replyto" placeholder="답변받으실 이메일을 입력해주세요" required>
-        </div>
-        <div class="input-group">
-            <label>문의 내용</label>
-            <textarea name="message" placeholder="제휴 관련 내용을 상세히 적어주세요" required></textarea>
-        </div>
-        <button type="submit">문의 보내기</button>
-    </form>
 </div>
 
 <footer>
