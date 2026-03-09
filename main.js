@@ -1,8 +1,8 @@
 
 // 페이지 로드 시 초기 설정
-window.onload = function() {
+document.addEventListener('DOMContentLoaded', function() {
   initSelects();
-};
+});
 
 function initSelects() {
   const yearSelect = document.getElementById('birthYear');

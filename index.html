@@ -22,34 +22,37 @@
         
         input[type="text"], select { 
             width: 100%; 
-            padding: 14px; 
+            padding: 15px; 
             border: 2px solid #ffedda; 
-            border-radius: 10px; 
+            border-radius: 12px; 
             box-sizing: border-box; 
             font-size: 16px; 
             outline: none; 
             transition: all 0.3s; 
             background-color: #fffbf5; 
             color: #d35400;
-        }
-        select {
+            -webkit-appearance: none; /* iOS 지원 */
             appearance: none;
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23f39c12%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-7.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px top 50%;
-            background-size: 12px auto;
-            cursor: pointer;
+            background-position: right 15px top 50%;
+            background-size: 14px auto;
         }
-        input[type="text"]:focus, select:focus { border-color: #f39c12; background-color: #fff; }
         
-        .select-row { display: flex; gap: 8px; margin-bottom: 5px; }
+        input[type="text"] {
+            background-image: none;
+            padding-right: 15px;
+        }
+
+        input[type="text"]:focus, select:focus { border-color: #f39c12; background-color: #fff; box-shadow: 0 0 8px rgba(243, 156, 18, 0.1); }
+        
+        .select-row { display: flex; gap: 10px; margin-bottom: 5px; }
         .select-row select { flex: 1; min-width: 0; }
 
-        button { width: 100%; padding: 15px; background-color: #f39c12; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; transition: all 0.3s; box-shadow: 0 4px 0 #d35400; }
+        button { width: 100%; padding: 18px; background-color: #f39c12; color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 15px; transition: all 0.3s; box-shadow: 0 4px 0 #d35400; }
         button:hover { background-color: #e67e22; transform: translateY(1px); box-shadow: 0 3px 0 #a04000; }
         button:active { transform: translateY(3px); box-shadow: none; }
         
-        /* Loading area, result table styles etc remain the same */
         #result { margin-top: 30px; display: none; border-top: 2px solid #ffedda; padding-top: 20px; }
         .loading-area { display: none; text-align: center; padding: 30px 0; }
         .tiger-character { font-size: 60px; display: inline-block; animation: bounce 0.8s infinite ease-in-out; margin-bottom: 15px; }
@@ -113,18 +116,6 @@
     </div>
 
     <button onclick="calculateSaju()">운세 확인하기</button>
-
-    <div id="result">
-        <h3 id="resultTitle" style="text-align: center;"></h3>
-        <div id="sajuTable"></div>
-        <div id="loadingArea" class="loading-area">
-            <div class="tiger-character">🐯</div>
-            <div class="loading-brand">49사주</div>
-            <div class="loading-msg">당신의 운명을 읽어보고 있어요...</div>
-        </div>
-        <div id="resultArea"></div>
-    </div>
-</div>
 
     <div id="result">
         <h3 id="resultTitle" style="text-align: center;"></h3>
