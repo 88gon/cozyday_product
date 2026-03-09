@@ -1,8 +1,19 @@
 
-// 페이지 로드 시 초기 설정
-document.addEventListener('DOMContentLoaded', function() {
-  initSelects();
-});
+// 페이지 로드 시 초기화
+function init() {
+  try {
+    initSelects();
+  } catch (e) {
+    console.error("Initialization failed:", e);
+  }
+}
+
+// DOM이 이미 로드되었는지 확인 후 실행
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 
 function initSelects() {
   const yearSelect = document.getElementById('birthYear');
@@ -11,7 +22,17 @@ function initSelects() {
   const hourSelect = document.getElementById('birthHour');
   const minuteSelect = document.getElementById('birthMinute');
 
-  if (!yearSelect) return;
+  if (!yearSelect || !monthSelect || !daySelect || !hourSelect || !minuteSelect) {
+    console.error("One or more select elements not found");
+    return;
+  }
+
+  // 기존 내용 초기화
+  yearSelect.innerHTML = '';
+  monthSelect.innerHTML = '';
+  daySelect.innerHTML = '';
+  hourSelect.innerHTML = '';
+  minuteSelect.innerHTML = '';
 
   // 년 (1930 - 현재)
   const currentYear = new Date().getFullYear();
@@ -68,16 +89,29 @@ function calculateSaju() {
       return;
   }
 
-  const year = parseInt(document.getElementById('birthYear').value);
-  const month = parseInt(document.getElementById('birthMonth').value);
-  const day = parseInt(document.getElementById('birthDay').value);
-  const hour = parseInt(document.getElementById('birthHour').value);
-  const minute = parseInt(document.getElementById('birthMinute').value);
-  const gender = parseInt(document.getElementById('gender').value);
+  const yearVal = document.getElementById('birthYear').value;
+  const monthVal = document.getElementById('birthMonth').value;
+  const dayVal = document.getElementById('birthDay').value;
+  const hourVal = document.getElementById('birthHour').value;
+  const minuteVal = document.getElementById('birthMinute').value;
+  const genderVal = document.getElementById('gender').value;
 
-  if(isNaN(year) || isNaN(month) || isNaN(day)) {
+  if(!yearVal || !monthVal || !dayVal) {
       alert("생년월일을 정확히 선택해주세요!");
       return;
+  }
+
+  const year = parseInt(yearVal);
+  const month = parseInt(monthVal);
+  const day = parseInt(dayVal);
+  const hour = parseInt(hourVal);
+  const minute = parseInt(minuteVal);
+  const gender = parseInt(genderVal);
+
+  // Solar 객체 확인 (lunar-javascript 라이브러리)
+  if (typeof Solar === 'undefined') {
+    alert("라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+    return;
   }
 
   // 만세력 변환
@@ -107,6 +141,12 @@ function calculateSaju() {
     </div>
   `;
   document.getElementById("sajuTable").innerHTML = tableHtml;
+
+  // sajuDatabase 확인
+  if (typeof sajuDatabase === 'undefined') {
+    alert("데이터를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+    return;
+  }
 
   const resultData = sajuDatabase[dayPillar];
 
