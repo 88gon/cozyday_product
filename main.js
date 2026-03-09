@@ -2,6 +2,13 @@
 // 페이지 로드 시 초기 설정
 window.onload = function() {
   initRollingPickers();
+  
+  // 모달 바깥 클릭 시 닫기
+  window.onclick = function(event) {
+    if (event.target.classList.contains('rolling-picker-modal')) {
+      event.target.style.display = 'none';
+    }
+  }
 };
 
 function initRollingPickers() {
@@ -10,7 +17,6 @@ function initRollingPickers() {
   const dayPicker = document.getElementById('dayPicker');
   const hourPicker = document.getElementById('hourPicker');
   const minutePicker = document.getElementById('minutePicker');
-  const genderPicker = document.getElementById('genderPicker');
 
   if (!yearPicker) return;
 
@@ -26,16 +32,32 @@ function initRollingPickers() {
   // 분 (0 - 59)
   populatePicker(minutePicker, 0, 59, 0);
 
-  // 모든 롤링 피커에 스크롤 이벤트 리스너 추가
+  // 모든 롤링 피커에 이벤트 리스너 추가
   document.querySelectorAll('.rolling-picker').forEach(picker => {
-    picker.addEventListener('scroll', () => updateActiveItem(picker));
-    // 초기 로드 시에도 active 설정
-    setTimeout(() => updateActiveItem(picker), 200);
+    picker.addEventListener('scroll', () => {
+      updateActiveItem(picker);
+      updateDisplayFromPicker(picker);
+    });
+    
+    // 초기 로드 시에도 active 설정 및 디스플레이 업데이트
+    setTimeout(() => {
+      updateActiveItem(picker);
+      updateDisplayFromPicker(picker);
+    }, 200);
   });
 }
 
 function populatePicker(el, start, end, selectedIndex) {
-  let html = '<div class="picker-item"></div>'; // 상단 여백
+  let html = '<div class="picker-item"></div>'; // 상단 여백 (중앙 정렬을 위해 60px/40px = 1.5개 필요하지만 1개로 시작)
+  // 여백을 60px에 맞추기 위해 실제로는 위아래로 빈 아이템이 더 필요할 수 있음. 
+  // CSS에서 height: 160px이고 selection-bar가 top: 60px이므로, 
+  // 위쪽 여백은 60px (1.5개 아이템). 아래쪽 여백도 60px.
+  // 여기서는 단순히 위아래 1개씩 넣고 scroll-snap을 믿어봅니다.
+  
+  // 보정: 160px 컨테이너에서 40px 아이템을 중앙(60px)에 두려면 위아래로 빈 아이템이 각 1.5개 필요.
+  // 정수 아이템으로 처리하기 위해 빈 아이템 2개씩 넣는게 깔끔함.
+  html = '<div class="picker-item"></div><div class="picker-item"></div>'; 
+  
   for (let i = start; i <= end; i++) {
     let unit = "";
     if (el.id.includes('year')) unit = "년";
@@ -44,9 +66,9 @@ function populatePicker(el, start, end, selectedIndex) {
     else if (el.id.includes('hour')) unit = "시";
     else if (el.id.includes('minute')) unit = "분";
     
-    html += `<div class="picker-item" data-value="${i}">${i}${unit}</div>`;
+    html += `<div class="picker-item" data-value="${i}" onclick="selectItem(this, ${i})">${i}${unit}</div>`;
   }
-  html += '<div class="picker-item"></div>'; // 하단 여백
+  html += '<div class="picker-item"></div><div class="picker-item"></div>'; 
   el.innerHTML = html;
   
   // 기본 선택 위치로 스크롤
@@ -55,23 +77,90 @@ function populatePicker(el, start, end, selectedIndex) {
   }, 100);
 }
 
+function selectItem(itemEl, value) {
+  const picker = itemEl.parentElement;
+  const items = Array.from(picker.querySelectorAll('.picker-item'));
+  const index = items.indexOf(itemEl) - 2; // 빈 아이템 2개 제외
+  picker.scrollTo({
+    top: index * 40,
+    behavior: 'smooth'
+  });
+}
+
 function updateActiveItem(el) {
   const items = el.querySelectorAll('.picker-item');
   const scrollPos = el.scrollTop;
   const index = Math.round(scrollPos / 40);
   
   items.forEach((item, i) => {
-    if (i === index + 1) item.classList.add('active');
+    if (i === index + 2) item.classList.add('active'); // 빈 아이템 2개 고려
     else item.classList.remove('active');
   });
 }
 
+function updateDisplayFromPicker(el) {
+  const pickerId = el.id;
+  if (pickerId.includes('year') || pickerId.includes('month') || pickerId.includes('day')) {
+    updateDateDisplay();
+  } else if (pickerId.includes('hour') || pickerId.includes('minute')) {
+    updateTimeDisplay();
+  } else if (pickerId === 'genderPicker') {
+    updateGenderDisplay();
+  }
+}
+
+function updateDateDisplay() {
+  const year = getPickerValue('yearPicker');
+  const month = getPickerValue('monthPicker');
+  const day = getPickerValue('dayPicker');
+  if (year && month && day) {
+    document.getElementById('dateDisplay').innerText = `${year}년 ${month}월 ${day}일`;
+  }
+}
+
+function updateGenderDisplay() {
+  const genderValue = getPickerValue('genderPicker');
+  const genderText = genderValue === "1" ? "남성 (乾命)" : "여성 (坤命)";
+  document.getElementById('genderDisplay').innerText = genderText;
+}
+
+function updateTimeDisplay() {
+  const hour = parseInt(getPickerValue('hourPicker'));
+  const minute = getPickerValue('minutePicker');
+  if (hour !== null && minute !== null) {
+    let ampm = hour < 12 ? "오전" : "오후";
+    let displayHour = hour % 12;
+    if (displayHour === 0) displayHour = 12;
+    document.getElementById('timeDisplay').innerText = `${ampm} ${displayHour}시 ${minute}분`;
+  }
+}
+
+function openPicker(type) {
+  document.getElementById(type + 'PickerModal').style.display = 'flex';
+  // 모달이 열릴 때 스크롤 위치 재조정 (가끔 0으로 초기화되는 경우 방지)
+  const modal = document.getElementById(type + 'PickerModal');
+  const pickers = modal.querySelectorAll('.rolling-picker');
+  pickers.forEach(p => {
+    const activeItem = p.querySelector('.picker-item.active');
+    if (activeItem) {
+      const items = Array.from(p.querySelectorAll('.picker-item'));
+      const index = items.indexOf(activeItem) - 2;
+      p.scrollTop = index * 40;
+    }
+  });
+}
+
+function closePicker(type) {
+  document.getElementById(type + 'PickerModal').style.display = 'none';
+}
+
 function getPickerValue(id) {
   const el = document.getElementById(id);
+  if (!el) return null;
   const scrollPos = el.scrollTop;
   const index = Math.round(scrollPos / 40);
   const items = el.querySelectorAll('.picker-item');
-  const activeItem = items[index + 1];
+  const activeItem = items[index + 2]; // 빈 아이템 2개 고려
   return activeItem ? activeItem.getAttribute('data-value') : null;
 }
 
@@ -91,7 +180,7 @@ function calculateSaju() {
   const minute = parseInt(getPickerValue('minutePicker'));
   const gender = parseInt(getPickerValue('genderPicker'));
 
-  if(!year || !month || !day) {
+  if(isNaN(year) || isNaN(month) || isNaN(day)) {
       alert("생년월일을 정확히 선택해주세요!");
       return;
   }
