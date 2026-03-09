@@ -19,37 +19,55 @@
         h2 { color: #e67e22; text-align: center; margin-top: 0; margin-bottom: 25px; font-weight: 800; }
         .input-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #d35400; }
-        input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ffedda; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; transition: border-color 0.3s; background-color: #fffbf5; }
-        input[type="text"]:focus { border-color: #f39c12; }
         
-        /* 롤링 피커 스타일 */
-        .individual-pickers { display: flex; gap: 8px; }
-        .picker-display { flex: 1; padding: 12px 5px; border: 2px solid #ffedda; border-radius: 8px; box-sizing: border-box; font-size: 15px; background-color: #fffbf5; cursor: pointer; color: #d35400; text-align: center; font-weight: bold; min-width: 0; }
+        input[type="text"], select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #ffedda; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            outline: none; 
+            transition: border-color 0.3s; 
+            background-color: #fffbf5; 
+            color: #d35400;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23f39c12%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-7.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px top 50%;
+            background-size: 12px auto;
+        }
+        input[type="text"]:focus, select:focus { border-color: #f39c12; }
         
-        .rolling-picker-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: flex-end; justify-content: center; }
-        .rolling-picker-container { background: white; width: 100%; max-width: 500px; border-radius: 20px 20px 0 0; padding: 20px; box-sizing: border-box; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-        .rolling-picker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ffedda; padding-bottom: 10px; }
-        .rolling-picker-header h4 { margin: 0; color: #e67e22; }
-        .done-btn { background: none; border: none; color: #f39c12; font-weight: bold; font-size: 1.1em; cursor: pointer; box-shadow: none; padding: 5px 10px; margin: 0; width: auto; }
-
-        .rolling-picker-group { display: flex; justify-content: center; background: #fffbf5; border-radius: 10px; padding: 5px; border: 1px solid #ffedda; height: 160px; overflow: hidden; position: relative; }
-        .rolling-picker-group::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 60px; background: linear-gradient(to bottom, rgba(255,251,245,1), rgba(255,251,245,0)); pointer-events: none; z-index: 2; }
-        .rolling-picker-group::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(to top, rgba(255,251,245,1), rgba(255,251,245,0)); pointer-events: none; z-index: 2; }
-        
-        .rolling-picker { width: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; -ms-overflow-style: none; scrollbar-width: none; }
-        .rolling-picker::-webkit-scrollbar { display: none; }
-        
-        .picker-item { height: 40px; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; font-size: 1em; color: #ccac93; transition: all 0.2s; cursor: pointer; }
-        .picker-item.active { color: #e67e22; font-weight: bold; font-size: 1.2em; }
-        
-        .selection-bar { position: absolute; top: 60px; left: 5px; right: 5px; height: 40px; border-top: 1.5px solid #f39c12; border-bottom: 1.5px solid #f39c12; pointer-events: none; z-index: 1; background: rgba(243, 156, 18, 0.03); }
+        .select-row { display: flex; gap: 8px; }
+        .select-row select { flex: 1; min-width: 0; }
 
         button { width: 100%; padding: 15px; background-color: #f39c12; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; transition: all 0.3s; box-shadow: 0 4px 0 #d35400; }
         button:hover { background-color: #e67e22; transform: translateY(1px); box-shadow: 0 3px 0 #a04000; }
         button:active { transform: translateY(3px); box-shadow: none; }
-        /* 생략된 결과 및 푸터 스타일들 유지 */
+        
+        /* Loading area, result table styles etc remain the same */
+        #result { margin-top: 30px; display: none; border-top: 2px solid #ffedda; padding-top: 20px; }
+        .loading-area { display: none; text-align: center; padding: 30px 0; }
+        .tiger-character { font-size: 60px; display: inline-block; animation: bounce 0.8s infinite ease-in-out; margin-bottom: 15px; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
+        .loading-brand { font-size: 22px; font-weight: bold; color: #f39c12; margin-bottom: 8px; }
+        .loading-msg { color: #e67e22; font-size: 14px; line-height: 1.5; padding: 0 20px; font-weight: bold; }
+        .core-summary { background-color: #e67e22; color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px; text-align: center; line-height: 1.6; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.2); }
+        .core-summary h3 { margin: 0 0 10px 0; color: #fffbf5; }
+        .core-summary .tags { color: #ffebcc; font-size: 0.9em; margin-bottom: 15px; font-weight: bold; }
+        .accordion-item { border: 1px solid #ffedda; margin-bottom: 10px; border-radius: 8px; overflow: hidden; }
+        .accordion-header { background-color: #fffbf5; padding: 15px; cursor: pointer; font-weight: bold; color: #d35400; display: flex; justify-content: space-between; align-items: center; transition: background 0.3s; }
+        .accordion-header:hover { background-color: #ffedda; }
+        .accordion-header::after { content: '▼'; font-size: 0.8em; color: #f39c12; }
+        .accordion-header.active::after { transform: rotate(180deg); }
+        .accordion-content { padding: 15px; display: none; background-color: white; line-height: 1.6; font-size: 0.95em; color: #333; border-top: 1px solid #ffedda; }
+        .soulmate-section { margin-top: 30px; padding: 25px; background-color: #fffbf5; border: 2px dashed #f39c12; border-radius: 15px; text-align: center; }
+        .soulmate-title { font-weight: bold; color: #e67e22; margin-bottom: 15px; font-size: 1.1em; }
+        .soulmate-character { font-size: 55px; margin-bottom: 10px; display: block; animation: float 3s infinite ease-in-out; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .soulmate-info { background: white; padding: 12px 20px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.08); border: 1px solid #ffedda; }
+        .soulmate-mbti { font-weight: bold; color: #f39c12; font-size: 1.3em; }
     </style>
 </head>
 <body>
@@ -68,35 +86,42 @@
 
     <div class="input-group">
         <label>생년월일</label>
-        <div class="individual-pickers">
-            <div class="picker-display" id="yearDisplay" onclick="openPicker('year')">1990년</div>
-            <div class="picker-display" id="monthDisplay" onclick="openPicker('month')">1월</div>
-            <div class="picker-display" id="dayDisplay" onclick="openPicker('day')">1일</div>
+        <div class="select-row">
+            <select id="birthYear"></select>
+            <select id="birthMonth"></select>
+            <select id="birthDay"></select>
         </div>
     </div>
 
     <div class="input-group">
         <label>성별</label>
-        <div class="picker-display" id="genderDisplay" style="width: 100%;" onclick="openPicker('gender')">남성 (男)</div>
+        <select id="gender">
+            <option value="1">남성 (男)</option>
+            <option value="0">여성 (女)</option>
+        </select>
     </div>
 
     <div class="input-group">
         <label>태어난 시간</label>
-        <div class="individual-pickers">
-            <div class="picker-display" id="hourDisplay" onclick="openPicker('hour')">오후 12시</div>
-            <div class="picker-display" id="minuteDisplay" onclick="openPicker('minute')">0분</div>
+        <div class="select-row">
+            <select id="birthHour"></select>
+            <select id="birthMinute"></select>
         </div>
     </div>
 
     <button onclick="calculateSaju()">운세 확인하기</button>
 
-    <!-- 모달들 -->
-    <div id="yearPickerModal" class="rolling-picker-modal"><div class="rolling-picker-container"><div class="rolling-picker-header"><h4>년도 선택</h4><button class="done-btn" onclick="closePicker('year')">확인</button></div><div class="rolling-picker-group"><div class="selection-bar"></div><div class="rolling-picker" id="yearPicker"></div></div></div></div>
-    <div id="monthPickerModal" class="rolling-picker-modal"><div class="rolling-picker-container"><div class="rolling-picker-header"><h4>월 선택</h4><button class="done-btn" onclick="closePicker('month')">확인</button></div><div class="rolling-picker-group"><div class="selection-bar"></div><div class="rolling-picker" id="monthPicker"></div></div></div></div>
-    <div id="dayPickerModal" class="rolling-picker-modal"><div class="rolling-picker-container"><div class="rolling-picker-header"><h4>일 선택</h4><button class="done-btn" onclick="closePicker('day')">확인</button></div><div class="rolling-picker-group"><div class="selection-bar"></div><div class="rolling-picker" id="dayPicker"></div></div></div></div>
-    <div id="genderPickerModal" class="rolling-picker-modal"><div class="rolling-picker-container"><div class="rolling-picker-header"><h4>성별 선택</h4><button class="done-btn" onclick="closePicker('gender')">확인</button></div><div class="rolling-picker-group"><div class="selection-bar"></div><div class="rolling-picker" id="genderPicker"><div class="picker-item"></div><div class="picker-item"></div><div class="picker-item active" data-value="1" onclick="selectItem(this, 1)">남성 (男)</div><div class="picker-item" data-value="0" onclick="selectItem(this, 0)">여성 (女)</div><div class="picker-item"></div><div class="picker-item"></div></div></div></div></div>
-    <div id="hourPickerModal" class="rolling-picker-modal"><div class="rolling-picker-container"><div class="rolling-picker-header"><h4>시 선택</h4><button class="done-btn" onclick="closePicker('hour')">확인</button></div><div class="rolling-picker-group"><div class="selection-bar"></div><div class="rolling-picker" id="hourPicker"></div></div></div></div>
-    <div id="minutePickerModal" class="rolling-picker-modal"><div class="rolling-picker-container"><div class="rolling-picker-header"><h4>분 선택</h4><button class="done-btn" onclick="closePicker('minute')">확인</button></div><div class="rolling-picker-group"><div class="selection-bar"></div><div class="rolling-picker" id="minutePicker"></div></div></div></div>
+    <div id="result">
+        <h3 id="resultTitle" style="text-align: center;"></h3>
+        <div id="sajuTable"></div>
+        <div id="loadingArea" class="loading-area">
+            <div class="tiger-character">🐯</div>
+            <div class="loading-brand">49사주</div>
+            <div class="loading-msg">당신의 운명을 읽어보고 있어요...</div>
+        </div>
+        <div id="resultArea"></div>
+    </div>
+</div>
 
     <div id="result">
         <h3 id="resultTitle" style="text-align: center;"></h3>

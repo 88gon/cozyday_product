@@ -1,142 +1,63 @@
 
 // 페이지 로드 시 초기 설정
 window.onload = function() {
-  initRollingPickers();
-  
-  // 모달 바깥 클릭 시 닫기
-  window.onclick = function(event) {
-    if (event.target.classList.contains('rolling-picker-modal')) {
-      event.target.style.display = 'none';
-    }
-  }
+  initSelects();
 };
 
-function initRollingPickers() {
-  const yearPicker = document.getElementById('yearPicker');
-  const monthPicker = document.getElementById('monthPicker');
-  const dayPicker = document.getElementById('dayPicker');
-  const hourPicker = document.getElementById('hourPicker');
-  const minutePicker = document.getElementById('minutePicker');
+function initSelects() {
+  const yearSelect = document.getElementById('birthYear');
+  const monthSelect = document.getElementById('birthMonth');
+  const daySelect = document.getElementById('birthDay');
+  const hourSelect = document.getElementById('birthHour');
+  const minuteSelect = document.getElementById('birthMinute');
 
-  if (!yearPicker) return;
+  if (!yearSelect) return;
 
   // 년 (1930 - 현재)
   const currentYear = new Date().getFullYear();
-  populatePicker(yearPicker, 1930, currentYear, currentYear - 1990);
+  for (let i = currentYear; i >= 1930; i--) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.innerText = i + "년";
+    if (i === 1990) opt.selected = true;
+    yearSelect.appendChild(opt);
+  }
+
   // 월 (1 - 12)
-  populatePicker(monthPicker, 1, 12, 0);
+  for (let i = 1; i <= 12; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.innerText = i + "월";
+    monthSelect.appendChild(opt);
+  }
+
   // 일 (1 - 31)
-  populatePicker(dayPicker, 1, 31, 0);
+  for (let i = 1; i <= 31; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.innerText = i + "일";
+    daySelect.appendChild(opt);
+  }
+
   // 시 (0 - 23)
-  populatePicker(hourPicker, 0, 23, 12);
-  // 분 (0 - 59)
-  populatePicker(minutePicker, 0, 59, 0);
-
-  // 모든 롤링 피커에 이벤트 리스너 추가
-  document.querySelectorAll('.rolling-picker').forEach(picker => {
-    picker.addEventListener('scroll', () => {
-      updateActiveItem(picker);
-      updateDisplayFromPicker(picker);
-    });
-    
-    // 초기 로드 시에도 active 설정 및 디스플레이 업데이트
-    setTimeout(() => {
-      updateActiveItem(picker);
-      updateDisplayFromPicker(picker);
-    }, 200);
-  });
-}
-
-function populatePicker(el, start, end, selectedIndex) {
-  let html = '<div class="picker-item"></div><div class="picker-item"></div>'; 
-  
-  for (let i = start; i <= end; i++) {
-    let unit = "";
-    if (el.id.includes('year')) unit = "년";
-    else if (el.id.includes('month')) unit = "월";
-    else if (el.id.includes('day')) unit = "일";
-    else if (el.id.includes('hour')) unit = "시";
-    else if (el.id.includes('minute')) unit = "분";
-    
-    html += `<div class="picker-item" data-value="${i}" onclick="selectItem(this, ${i})">${i}${unit}</div>`;
-  }
-  html += '<div class="picker-item"></div><div class="picker-item"></div>'; 
-  el.innerHTML = html;
-  
-  // 기본 선택 위치로 스크롤
-  setTimeout(() => {
-    el.scrollTop = selectedIndex * 40;
-  }, 100);
-}
-
-function selectItem(itemEl, value) {
-  const picker = itemEl.parentElement;
-  const items = Array.from(picker.querySelectorAll('.picker-item'));
-  const index = items.indexOf(itemEl) - 2; 
-  picker.scrollTo({
-    top: index * 40,
-    behavior: 'smooth'
-  });
-}
-
-function updateActiveItem(el) {
-  const items = el.querySelectorAll('.picker-item');
-  const scrollPos = el.scrollTop;
-  const index = Math.round(scrollPos / 40);
-  
-  items.forEach((item, i) => {
-    if (i === index + 2) item.classList.add('active'); 
-    else item.classList.remove('active');
-  });
-}
-
-function updateDisplayFromPicker(el) {
-  const pickerId = el.id;
-  const val = getPickerValue(pickerId);
-  if (!val) return;
-
-  if (pickerId === 'yearPicker') document.getElementById('yearDisplay').innerText = val + "년";
-  if (pickerId === 'monthPicker') document.getElementById('monthDisplay').innerText = val + "월";
-  if (pickerId === 'dayPicker') document.getElementById('dayDisplay').innerText = val + "일";
-  if (pickerId === 'genderPicker') {
-    document.getElementById('genderDisplay').innerText = val === "1" ? "남성 (男)" : "여성 (女)";
-  }
-  if (pickerId === 'hourPicker') {
-    const hour = parseInt(val);
-    let ampm = hour < 12 ? "오전" : "오후";
-    let displayHour = hour % 12;
+  for (let i = 0; i <= 23; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    let ampm = i < 12 ? "오전" : "오후";
+    let displayHour = i % 12;
     if (displayHour === 0) displayHour = 12;
-    document.getElementById('hourDisplay').innerText = ampm + " " + displayHour + "시";
+    opt.innerText = ampm + " " + displayHour + "시";
+    if (i === 12) opt.selected = true;
+    hourSelect.appendChild(opt);
   }
-  if (pickerId === 'minutePicker') document.getElementById('minuteDisplay').innerText = val + "분";
-}
 
-function openPicker(type) {
-  document.getElementById(type + 'PickerModal').style.display = 'flex';
-  const modal = document.getElementById(type + 'PickerModal');
-  const picker = modal.querySelector('.rolling-picker');
-  if (picker) {
-    const activeItem = picker.querySelector('.picker-item.active');
-    if (activeItem) {
-      const items = Array.from(picker.querySelectorAll('.picker-item'));
-      const index = items.indexOf(activeItem) - 2;
-      picker.scrollTop = index * 40;
-    }
+  // 분 (0 - 59)
+  for (let i = 0; i <= 59; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.innerText = i + "분";
+    minuteSelect.appendChild(opt);
   }
-}
-
-function closePicker(type) {
-  document.getElementById(type + 'PickerModal').style.display = 'none';
-}
-
-function getPickerValue(id) {
-  const el = document.getElementById(id);
-  if (!el) return null;
-  const scrollPos = el.scrollTop;
-  const index = Math.round(scrollPos / 40);
-  const items = el.querySelectorAll('.picker-item');
-  const activeItem = items[index + 2]; 
-  return activeItem ? activeItem.getAttribute('data-value') : null;
 }
 
 // 사주 계산 및 결과 출력 메인 함수
@@ -147,12 +68,12 @@ function calculateSaju() {
       return;
   }
 
-  const year = parseInt(getPickerValue('yearPicker'));
-  const month = parseInt(getPickerValue('monthPicker'));
-  const day = parseInt(getPickerValue('dayPicker'));
-  const hour = parseInt(getPickerValue('hourPicker'));
-  const minute = parseInt(getPickerValue('minutePicker'));
-  const gender = parseInt(getPickerValue('genderPicker'));
+  const year = parseInt(document.getElementById('birthYear').value);
+  const month = parseInt(document.getElementById('birthMonth').value);
+  const day = parseInt(document.getElementById('birthDay').value);
+  const hour = parseInt(document.getElementById('birthHour').value);
+  const minute = parseInt(document.getElementById('birthMinute').value);
+  const gender = parseInt(document.getElementById('gender').value);
 
   if(isNaN(year) || isNaN(month) || isNaN(day)) {
       alert("생년월일을 정확히 선택해주세요!");
