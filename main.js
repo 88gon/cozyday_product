@@ -148,7 +148,12 @@ function calculateSaju() {
     return;
   }
 
-  const resultData = sajuDatabase[dayPillar];
+  let resultData = sajuDatabase[dayPillar];
+  
+  // 상세 풀이 데이터가 없는 경우 Fallback 실행
+  if (!resultData) {
+    resultData = getFallbackSajuData(dayPillar, saju.getDayGan().toString());
+  }
 
   const dayGan = saju.getDayGan().toString();
   let soulmateData = { mbti: "ENFP", char: "🌿", desc: "당신의 성장을 응원해줄 자유로운 영혼", item: "따뜻한 차 한 잔" };
@@ -211,19 +216,42 @@ function calculateSaju() {
               </div>
             </div>
           `;
-      } else {
-          const tigerWarning = "올해는 좀 험난하겠네. 조심해서 나쁠 거 없잖아. 쫄지 마, 뒤에 내가 버티고 있으니까.";
-          resultArea.innerHTML = `
-            <div class="tiger-comment" style="background: #fdf5e6; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #e74c3c; font-size: 0.95em; line-height: 1.6;">
-              <strong>🐯 호랑이 수호신의 한마디:</strong><br>
-              "${tigerWarning}"
-            </div>
-            <div style="text-align: center; padding: 20px;">
-              <p>아직 <b>${dayPillar}</b>에 대한 정밀 분석 데이터가 준비되지 않았습니다.</p>
-            </div>
-          `;
       }
   }, 1500);
+}
+
+// 상세 풀이가 없을 때 보여줄 기본 운세 정보 생성 함수
+function getFallbackSajuData(pillar, gan) {
+  const ganInfo = {
+    "甲": { desc: "쭉쭉 뻗은 거목 같은 기운이네. 정직하고 추진력이 좋긴 한데, 너무 뻣뻣해서 부러질까 봐 걱정이다. 유연성 좀 키워!", tags: ["#정직", "#추진력", "#강직함"] },
+    "乙": { desc: "끈질긴 생명력의 화초 같구만. 겉은 부드러워 보여도 속은 독종이지? 적응력 하나는 끝내주니까 어디서든 잘 살 거야.", tags: ["#적응력", "#생명력", "#외유내강"] },
+    "丙": { desc: "하늘에 뜬 태양 같은 존재네! 열정적이고 밝아서 주변 사람들까지 환하게 만드는데, 그 급한 성격 좀 죽여라!", tags: ["#열정", "#밝음", "#급한성격"] },
+    "丁": { desc: "어둠을 밝히는 등불 같은 기운이야. 섬세하고 따뜻해서 상담가 기질이 있네. 근데 속으로 삭히지 말고 표현 좀 하고 살아!", tags: ["#따뜻함", "#섬세함", "#사려깊음"] },
+    "戊": { desc: "듬직한 태산 같은 사람이구만. 믿음직스럽고 묵직해서 사람들이 너한테 많이 의지하지? 가끔은 무거우니까 너도 좀 내려놔.", tags: ["#신뢰", "#듬직함", "#중재자"] },
+    "己": { desc: "만물을 길러내는 비옥한 땅이네. 포용력도 좋고 현실적인 감각이 뛰어나구만. 남들 챙기느라 정작 네 텃밭 망치지 말고!", tags: ["#포용력", "#현실적", "#어머니마음"] },
+    "庚": { desc: "날카로운 칼이나 거대한 바위 같네. 정의감 넘치고 결단력이 예술이야. 근데 너무 차가워서 주변 사람들 베일까 봐 무섭다!", tags: ["#정의감", "#결단력", "#카리스마"] },
+    "辛": { desc: "반짝이는 보석이나 정밀한 가공품이네. 예리하고 세밀해서 완벽주의자 소리 듣지? 너무 예민하게 굴지 마, 피곤해.", tags: ["#섬세함", "#완벽주의", "#예리함"] },
+    "壬": { desc: "넓은 바다 같은 포부를 가졌구만. 지혜롭고 흐름을 잘 읽어서 리더가 될 상이야. 근데 속을 알 수가 없어서 무섭네!", tags: ["#지혜", "#포용", "#변화무쌍"] },
+    "癸": { desc: "대지를 적시는 단비 같은 존재야. 총명하고 유연해서 어디든 스며들지? 근데 생각이 너무 많아서 걱정을 사서 하는구만.", tags: ["#총명함", "#유연함", "#생각많음"] }
+  };
+
+  const info = ganInfo[gan] || { desc: "아직 내가 네 기운을 다 못 읽었어. 조만간 다시 와봐. 일단 넌 꽤 특별한 놈인 건 확실해!", tags: ["#신비로움", "#잠재력", "#미지의존재"] };
+
+  return {
+    title: `${pillar}의 기운을 타고난 당신 🐯`,
+    tags: info.tags,
+    coreSummary: info.desc,
+    sections: [
+      {
+        title: "🐯 호랑이 수호신의 한마디",
+        content: `네 일주(${pillar})에 대한 정밀 분석은 아직 불침번 서는 중이라 조금 늦어지고 있어. 하지만 네 중심 기운인 '${gan}'을 보니까 기본적으로 꽤 괜찮은 녀석이네. 너무 조급해하지 마.`
+      },
+      {
+        title: "💡 기본 성향 분석",
+        content: info.desc
+      }
+    ]
+  };
 }
 
 function toggleAccordion(header) {
