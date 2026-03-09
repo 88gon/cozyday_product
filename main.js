@@ -48,15 +48,7 @@ function initRollingPickers() {
 }
 
 function populatePicker(el, start, end, selectedIndex) {
-  let html = '<div class="picker-item"></div>'; // 상단 여백 (중앙 정렬을 위해 60px/40px = 1.5개 필요하지만 1개로 시작)
-  // 여백을 60px에 맞추기 위해 실제로는 위아래로 빈 아이템이 더 필요할 수 있음. 
-  // CSS에서 height: 160px이고 selection-bar가 top: 60px이므로, 
-  // 위쪽 여백은 60px (1.5개 아이템). 아래쪽 여백도 60px.
-  // 여기서는 단순히 위아래 1개씩 넣고 scroll-snap을 믿어봅니다.
-  
-  // 보정: 160px 컨테이너에서 40px 아이템을 중앙(60px)에 두려면 위아래로 빈 아이템이 각 1.5개 필요.
-  // 정수 아이템으로 처리하기 위해 빈 아이템 2개씩 넣는게 깔끔함.
-  html = '<div class="picker-item"></div><div class="picker-item"></div>'; 
+  let html = '<div class="picker-item"></div><div class="picker-item"></div>'; 
   
   for (let i = start; i <= end; i++) {
     let unit = "";
@@ -80,7 +72,7 @@ function populatePicker(el, start, end, selectedIndex) {
 function selectItem(itemEl, value) {
   const picker = itemEl.parentElement;
   const items = Array.from(picker.querySelectorAll('.picker-item'));
-  const index = items.indexOf(itemEl) - 2; // 빈 아이템 2개 제외
+  const index = items.indexOf(itemEl) - 2; 
   picker.scrollTo({
     top: index * 40,
     behavior: 'smooth'
@@ -93,61 +85,44 @@ function updateActiveItem(el) {
   const index = Math.round(scrollPos / 40);
   
   items.forEach((item, i) => {
-    if (i === index + 2) item.classList.add('active'); // 빈 아이템 2개 고려
+    if (i === index + 2) item.classList.add('active'); 
     else item.classList.remove('active');
   });
 }
 
 function updateDisplayFromPicker(el) {
   const pickerId = el.id;
-  if (pickerId.includes('year') || pickerId.includes('month') || pickerId.includes('day')) {
-    updateDateDisplay();
-  } else if (pickerId.includes('hour') || pickerId.includes('minute')) {
-    updateTimeDisplay();
-  } else if (pickerId === 'genderPicker') {
-    updateGenderDisplay();
+  const val = getPickerValue(pickerId);
+  if (!val) return;
+
+  if (pickerId === 'yearPicker') document.getElementById('yearDisplay').innerText = val + "년";
+  if (pickerId === 'monthPicker') document.getElementById('monthDisplay').innerText = val + "월";
+  if (pickerId === 'dayPicker') document.getElementById('dayDisplay').innerText = val + "일";
+  if (pickerId === 'genderPicker') {
+    document.getElementById('genderDisplay').innerText = val === "1" ? "남성 (男)" : "여성 (女)";
   }
-}
-
-function updateDateDisplay() {
-  const year = getPickerValue('yearPicker');
-  const month = getPickerValue('monthPicker');
-  const day = getPickerValue('dayPicker');
-  if (year && month && day) {
-    document.getElementById('dateDisplay').innerText = `${year}년 ${month}월 ${day}일`;
-  }
-}
-
-function updateGenderDisplay() {
-  const genderValue = getPickerValue('genderPicker');
-  const genderText = genderValue === "1" ? "남성 (乾命)" : "여성 (坤命)";
-  document.getElementById('genderDisplay').innerText = genderText;
-}
-
-function updateTimeDisplay() {
-  const hour = parseInt(getPickerValue('hourPicker'));
-  const minute = getPickerValue('minutePicker');
-  if (hour !== null && minute !== null) {
+  if (pickerId === 'hourPicker') {
+    const hour = parseInt(val);
     let ampm = hour < 12 ? "오전" : "오후";
     let displayHour = hour % 12;
     if (displayHour === 0) displayHour = 12;
-    document.getElementById('timeDisplay').innerText = `${ampm} ${displayHour}시 ${minute}분`;
+    document.getElementById('hourDisplay').innerText = ampm + " " + displayHour + "시";
   }
+  if (pickerId === 'minutePicker') document.getElementById('minuteDisplay').innerText = val + "분";
 }
 
 function openPicker(type) {
   document.getElementById(type + 'PickerModal').style.display = 'flex';
-  // 모달이 열릴 때 스크롤 위치 재조정 (가끔 0으로 초기화되는 경우 방지)
   const modal = document.getElementById(type + 'PickerModal');
-  const pickers = modal.querySelectorAll('.rolling-picker');
-  pickers.forEach(p => {
-    const activeItem = p.querySelector('.picker-item.active');
+  const picker = modal.querySelector('.rolling-picker');
+  if (picker) {
+    const activeItem = picker.querySelector('.picker-item.active');
     if (activeItem) {
-      const items = Array.from(p.querySelectorAll('.picker-item'));
+      const items = Array.from(picker.querySelectorAll('.picker-item'));
       const index = items.indexOf(activeItem) - 2;
-      p.scrollTop = index * 40;
+      picker.scrollTop = index * 40;
     }
-  });
+  }
 }
 
 function closePicker(type) {
@@ -160,7 +135,7 @@ function getPickerValue(id) {
   const scrollPos = el.scrollTop;
   const index = Math.round(scrollPos / 40);
   const items = el.querySelectorAll('.picker-item');
-  const activeItem = items[index + 2]; // 빈 아이템 2개 고려
+  const activeItem = items[index + 2]; 
   return activeItem ? activeItem.getAttribute('data-value') : null;
 }
 
@@ -172,7 +147,6 @@ function calculateSaju() {
       return;
   }
 
-  // 롤링 피커에서 값 가져오기
   const year = parseInt(getPickerValue('yearPicker'));
   const month = parseInt(getPickerValue('monthPicker'));
   const day = parseInt(getPickerValue('dayPicker'));
@@ -195,11 +169,9 @@ function calculateSaju() {
   const dayPillar = saju.getDay().toString();
   const hourPillar = saju.getTime().toString();
 
-  // 결과창 초기 노출
   document.getElementById('result').style.display = 'block';
   document.getElementById('resultTitle').innerText = `${name}님의 사주 결과`;
 
-  // 화면에 8글자 표 그리기
   const tableHtml = `
     <div style="background-color: #fffbf5; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ffedda;">
       <h3 style="margin-top: 0; color: #e67e22;">나의 사주 팔자</h3>
@@ -217,7 +189,6 @@ function calculateSaju() {
 
   const resultData = sajuDatabase[dayPillar];
 
-  // MBTI 소울메이트 로직
   const dayGan = saju.getDayGan().toString();
   let soulmateData = { mbti: "ENFP", char: "🌿", desc: "당신의 성장을 응원해줄 자유로운 영혼", item: "따뜻한 차 한 잔" };
 
