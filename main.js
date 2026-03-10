@@ -1,11 +1,50 @@
 
+// Firebase 설정 (사용자님의 실제 설정으로 교체해주세요)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Firebase 초기화 (이미 초기화되어 있지 않은 경우에만)
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.firestore();
+
 // 페이지 로드 시 초기화
 function init() {
   try {
     initSelects();
+    initEventListeners();
   } catch (e) {
     console.error("Initialization failed:", e);
   }
+}
+
+function initEventListeners() {
+    const unknownTimeCheckbox = document.getElementById('unknownTime');
+    const hourSelect = document.getElementById('birthHour');
+    const minuteSelect = document.getElementById('birthMinute');
+
+    if (unknownTimeCheckbox) {
+        unknownTimeCheckbox.addEventListener('change', function() {
+            const isChecked = this.checked;
+            hourSelect.disabled = isChecked;
+            minuteSelect.disabled = isChecked;
+            
+            if (isChecked) {
+                hourSelect.style.opacity = "0.5";
+                minuteSelect.style.opacity = "0.5";
+            } else {
+                hourSelect.style.opacity = "1";
+                minuteSelect.style.opacity = "1";
+            }
+        });
+    }
 }
 
 // DOM이 이미 로드되었는지 확인 후 실행
@@ -81,6 +120,19 @@ function initSelects() {
   }
 }
 
+// 데이터를 파이어베이스에 저장하는 함수
+async function saveSajuData(data) {
+    try {
+        await db.collection("saju_results").add({
+            ...data,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log("Data successfully saved to Firebase");
+    } catch (e) {
+        console.error("Error saving to Firebase: ", e);
+    }
+}
+
 // 사주 계산 및 결과 출력 메인 함수
 function calculateSaju() {
   const name = document.getElementById('userName').value;
@@ -95,6 +147,7 @@ function calculateSaju() {
   const hourVal = document.getElementById('birthHour').value;
   const minuteVal = document.getElementById('birthMinute').value;
   const genderVal = document.getElementById('gender').value;
+  const isTimeUnknown = document.getElementById('unknownTime').checked;
 
   if(!yearVal || !monthVal || !dayVal) {
       alert("생년월일을 정확히 선택해주세요!");
@@ -104,9 +157,17 @@ function calculateSaju() {
   const year = parseInt(yearVal);
   const month = parseInt(monthVal);
   const day = parseInt(dayVal);
-  const hour = parseInt(hourVal);
-  const minute = parseInt(minuteVal);
   const gender = parseInt(genderVal);
+  
+  // 시간을 모를 경우 정오(12:00)로 계산하거나 시주를 제외하는 방식이 있으나, 
+  // 라이브러리 계산을 위해 기본값을 설정합니다.
+  let hour = parseInt(hourVal);
+  let minute = parseInt(minuteVal);
+  
+  if (isTimeUnknown) {
+      hour = 12; // 시간을 모를 때 관습적으로 사용하는 정오
+      minute = 0;
+  }
 
   if (typeof Solar === 'undefined') {
     alert("라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.");
@@ -120,7 +181,25 @@ function calculateSaju() {
   const yearPillar = saju.getYear().toString();
   const monthPillar = saju.getMonth().toString();
   const dayPillar = saju.getDay().toString();
-  const hourPillar = saju.getTime().toString();
+  const hourPillar = isTimeUnknown ? "모름" : saju.getTime().toString();
+
+  // 파이어베이스 저장 데이터 준비
+  const userData = {
+      name: name,
+      birthDate: `${year}-${month}-${day}`,
+      birthTime: isTimeUnknown ? "unknown" : `${hour}:${minute}`,
+      gender: gender === 1 ? "남성" : "여성",
+      isTimeUnknown: isTimeUnknown,
+      saju: {
+          year: yearPillar,
+          month: monthPillar,
+          day: dayPillar,
+          hour: hourPillar
+      }
+  };
+
+  // 데이터 저장 실행
+  saveSajuData(userData);
 
   document.getElementById('result').style.display = 'block';
   document.getElementById('resultTitle').innerText = `${name}님의 사주 결과`;
