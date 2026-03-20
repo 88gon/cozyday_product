@@ -195,8 +195,8 @@ function calculateSaju() {
   const yearPillar = saju.getYear().toString();
   const monthPillar = saju.getMonth().toString();
   const dayPillar = saju.getDay().toString();
-  // 💥 [수정] sajuData.js의 키 값 형식과 맞춥니다. 예: "갑자(甲子)"
-  const dayPillarKey = `${saju.getDayGan()}${saju.getDayZhi()}(${dayPillar})`; 
+  // sajuData.js의 키 값 형식(Hanja)과 맞춥니다.
+  const dayPillarKey = dayPillar; 
   const hourPillar = isTimeUnknown ? "모름" : saju.getTime().toString();
 
   // 파이어베이스 저장 데이터 준비 (기존 코드 유지)
