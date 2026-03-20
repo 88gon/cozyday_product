@@ -1,5 +1,15 @@
-firebase-debug.log
+# Dependency directories
 node_modules/
-.env
-functions/.env
+
+# Firebase
 .firebase/
+firebase-debug.log
+firebase-debug.err
+
+# Environment variables
+.env
+.env.local
+
+# OS generated files
+.DS_Store
+Thumbs.db
