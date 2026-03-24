@@ -20,7 +20,13 @@
   </url>
   <url>
     <loc>https://49saju.xyz/privacy.html</loc>
-    <lastmod>2026-03-18</lastmod>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://49saju.xyz/terms.html</loc>
+    <lastmod>2026-03-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
