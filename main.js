@@ -1,21 +1,6 @@
 // main.js
 
-// Firebase 설정 및 초기화 (기존 코드 유지)
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const db = firebase.firestore();
-
-// 페이지 로드 시 초기화 (기존 코드 유지)
+// 페이지 로드 시 초기화
 function init() {
   try {
     initSelects();
@@ -122,19 +107,6 @@ function initSelects() {
   }
 }
 
-// 데이터를 파이어베이스에 저장하는 함수 (기존 코드 유지)
-async function saveSajuData(data) {
-    try {
-        await db.collection("saju_results").add({
-            ...data,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        console.log("Data successfully saved to Firebase");
-    } catch (e) {
-        console.error("Error saving to Firebase: ", e);
-    }
-}
-
 // 💥 [수정] MBTI 소울메이트 로직을 렌더링 함수 밖으로 분리 (관리 용이)
 const mbtiSoulmateMap = {
     "甲": { mbti: "INFJ", char: "🌲", desc: "당신의 깊은 생각을 이해해줄 따뜻한 동반자", item: "싱그러운 숲향 향수" },
@@ -198,24 +170,6 @@ function calculateSaju() {
   // sajuData.js의 키 값 형식(Hanja)과 맞춥니다.
   const dayPillarKey = dayPillar; 
   const hourPillar = isTimeUnknown ? "모름" : saju.getTime().toString();
-
-  // 파이어베이스 저장 데이터 준비 (기존 코드 유지)
-  const userData = {
-      name: name,
-      birthDate: `${year}-${month}-${day}`,
-      birthTime: isTimeUnknown ? "unknown" : `${hour}:${minute}`,
-      gender: gender === 1 ? "남성" : "여성",
-      isTimeUnknown: isTimeUnknown,
-      saju: {
-          year: yearPillar,
-          month: monthPillar,
-          day: dayPillar,
-          hour: hourPillar
-      }
-  };
-
-  // 데이터 저장 실행 (기존 코드 유지)
-  saveSajuData(userData);
 
   document.getElementById('result').style.display = 'block';
   document.getElementById('resultTitle').innerText = `${name}님의 사주 결과`;
