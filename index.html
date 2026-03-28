@@ -162,5 +162,27 @@
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
 <script src="sajuData.js"></script>
 <script src="main.js"></script>
+
+<!-- 쿠키 동의 배너 -->
+<div id="cookieConsent" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#fff8f0; border-top:2px solid #f39c12; padding:15px 20px; z-index:9999; box-shadow:0 -4px 12px rgba(0,0,0,0.08); font-size:0.88em; color:#4a3f35;">
+    <div style="max-width:700px; margin:0 auto; display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
+        <p style="margin:0; flex:1; min-width:220px; line-height:1.6;">
+            본 사이트는 서비스 개선 및 맞춤 광고 제공을 위해 <strong>쿠키</strong>와 <strong>Google Analytics, Google AdSense</strong>를 사용합니다.
+            자세한 내용은 <a href="privacy.html" style="color:#e67e22; font-weight:bold;">개인정보처리방침</a>을 확인하세요.
+        </p>
+        <button onclick="acceptCookies()" style="background:#f39c12; color:#fff; border:none; border-radius:8px; padding:10px 22px; font-size:0.95em; font-weight:bold; cursor:pointer; white-space:nowrap;">동의하기</button>
+    </div>
+</div>
+<script>
+(function() {
+    if (!localStorage.getItem('cookieConsented')) {
+        document.getElementById('cookieConsent').style.display = 'block';
+    }
+})();
+function acceptCookies() {
+    localStorage.setItem('cookieConsented', '1');
+    document.getElementById('cookieConsent').style.display = 'none';
+}
+</script>
 </body>
 </html>
