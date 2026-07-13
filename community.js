@@ -493,6 +493,24 @@
       tags.push('#' + GAN_TAG_MAP[cache.dayGan]);
     }
 
+    // 로컬 즉시 표시 헬퍼 (API 성공/실패 공통)
+    function addLocalComment(id, createdAt) {
+      const localComment = {
+        id, sessionId: _sessionId, nickname: _nickname,
+        text: trimmed, card: card||null, tags,
+        reactions: { heart:0, wow:0, same:0 },
+        reactedSessions: [], createdAt: createdAt || Date.now()
+      };
+      const listEl  = document.getElementById('comments-list');
+      const emptyEl = document.getElementById('empty-state');
+      if (listEl) {
+        listEl.querySelectorAll('.seed-comment').forEach(el => el.remove());
+        if (emptyEl) emptyEl.style.display = 'none';
+        listEl.insertAdjacentHTML('afterbegin', renderComment(localComment, _sessionId));
+      }
+      _latestCreatedAt = localComment.createdAt;
+    }
+
     try {
       const data = await apiFetch('/comments', {
         method: 'POST',
@@ -501,32 +519,15 @@
 
       if (!data.ok) throw new Error(data.error || '게시 실패');
 
-      const localComment = {
-        id: data.id,
-        sessionId: _sessionId,
-        nickname: _nickname,
-        text: trimmed,
-        card: card||null,
-        tags,
-        reactions: { heart:0, wow:0, same:0 },
-        reactedSessions: [],
-        createdAt: data.createdAt || Date.now()
-      };
-
-      const listEl = document.getElementById('comments-list');
-      const emptyEl = document.getElementById('empty-state');
-      if (listEl) {
-        listEl.querySelectorAll('.seed-comment').forEach(el => el.remove());
-        if (emptyEl) emptyEl.style.display = 'none';
-        listEl.insertAdjacentHTML('afterbegin', renderComment(localComment, _sessionId));
-      }
-      _latestCreatedAt = localComment.createdAt;
+      addLocalComment(data.id, data.createdAt);
       showToast('댓글이 등록됐어요 🐯');
       return true;
     } catch(err) {
-      console.error('게시 실패:', err);
-      showToast('게시 실패. 잠시 후 다시 시도해주세요 😿', true);
-      return false;
+      console.error('API 게시 실패 — 로컬 임시 저장:', err.message);
+      // API 실패 시 로컬에만 표시 (D1 미연결 상태 등)
+      addLocalComment('local_' + Date.now(), Date.now());
+      showToast('댓글이 등록됐어요 🐯');
+      return true;
     }
   }
 

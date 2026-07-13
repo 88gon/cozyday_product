@@ -30,6 +30,7 @@ function json(data, status = 200) {
 // GET /api/comments?page=0&tag=#갑목일간
 // ──────────────────────────────────────────
 export async function onRequestGet({ env, request }) {
+  if (!env.DB) return json({ ok: false, error: 'D1 DB 미연결 (Cloudflare 대시보드에서 DB 바인딩 필요)' }, 503);
   const url    = new URL(request.url);
   const page   = Math.max(0, parseInt(url.searchParams.get('page') || '0'));
   const tag    = url.searchParams.get('tag') || '';
@@ -73,6 +74,7 @@ export async function onRequestGet({ env, request }) {
 // body: { sessionId, nickname, text, card?, tags? }
 // ──────────────────────────────────────────
 export async function onRequestPost({ env, request }) {
+  if (!env.DB) return json({ ok: false, error: 'D1 DB 미연결' }, 503);
   try {
     const body = await request.json();
     const { sessionId, nickname, text, card, tags } = body;
