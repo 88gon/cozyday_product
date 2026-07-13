@@ -12,14 +12,14 @@ const firebaseConfig = {
   appId: "YOUR_APP_ID"                           // ← 실제 값으로 교체
 };
 
-// Firebase 초기화 (중복 초기화 방지)
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-} else if (typeof firebase !== 'undefined') {
-  // 이미 초기화된 경우 기존 앱 재사용
-}
+// 플레이스홀더 값이면 초기화하지 않음 (씨앗 댓글 모드로 동작)
+const _isConfigured = firebaseConfig.apiKey && !firebaseConfig.apiKey.startsWith('YOUR_');
 
-// Firestore 인스턴스를 전역으로 노출
-if (typeof firebase !== 'undefined') {
+if (_isConfigured && typeof firebase !== 'undefined') {
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   window.db = firebase.firestore();
+} else {
+  window.db = null; // 씨앗 댓글 모드
 }

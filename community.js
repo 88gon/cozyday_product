@@ -104,10 +104,17 @@
   }
 
   // ─────────────────────────────────────────────
-  // Firestore 체크
+  // Firestore 체크 & 타임아웃 헬퍼
   // ─────────────────────────────────────────────
   function getDb() {
     return (typeof window !== 'undefined' && window.db) ? window.db : null;
+  }
+
+  function withTimeout(promise, ms) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms))
+    ]);
   }
 
   // ─────────────────────────────────────────────
@@ -529,7 +536,7 @@
         query = query.startAfter(_lastDoc);
       }
 
-      const snapshot = await query.get();
+      const snapshot = await withTimeout(query.get(), 6000);
 
       if (snapshot.empty && _comments.length === 0) {
         // 실제 댓글 없으면 씨앗 댓글 표시
@@ -573,14 +580,15 @@
 
     } catch (err) {
       console.error('댓글 로드 실패:', err);
+      // 타임아웃/에러 시 씨앗 댓글로 폴백
       if (listEl) {
-        listEl.innerHTML = `
-          <div style="text-align:center;padding:30px;">
-            <div style="font-size:2em;">😿</div>
-            <p style="color:#aaa;margin-top:10px;">댓글을 불러오지 못했습니다.</p>
-            <button onclick="CommunityApp.loadComments(true)" style="background:#f39c12;color:white;border:none;border-radius:20px;padding:8px 20px;cursor:pointer;margin-top:10px;">다시 시도</button>
-          </div>`;
+        const filtered = _activeTag
+          ? SEED_COMMENTS.filter(c => (c.tags || []).includes(_activeTag))
+          : SEED_COMMENTS;
+        listEl.innerHTML = filtered.map(renderSeedComment).join('');
+        if (emptyEl) emptyEl.style.display = 'none';
       }
+      if (loadMoreBtn) loadMoreBtn.style.display = 'none';
     }
 
     _loading = false;
@@ -660,7 +668,7 @@
     };
 
     try {
-      const ref = await db.collection(COLLECTION).add(docData);
+      const ref = await withTimeout(db.collection(COLLECTION).add(docData), 8000);
       // 즉시 로컬에 추가 (실시간 리스너가 처리하기 전에 UI 업데이트)
       const localDoc = {
         id: ref.id,
@@ -670,13 +678,19 @@
       const emptyEl = document.getElementById('empty-state');
       if (listEl) {
         if (emptyEl) emptyEl.style.display = 'none';
+        // 씨앗 댓글 제거 후 실제 댓글 삽입
+        listEl.querySelectorAll('.seed-comment').forEach(el => el.remove());
         listEl.insertAdjacentHTML('afterbegin', renderComment(localDoc, _sessionId));
       }
       _comments.unshift(localDoc);
       return true;
     } catch (err) {
       console.error('댓글 게시 실패:', err);
-      alert('댓글 게시에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      if (err.message === 'timeout') {
+        alert('🐯 서버 연결이 느려요. Firebase 설정을 확인하거나 잠시 후 다시 시도해주세요.');
+      } else {
+        alert('댓글 게시에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      }
       return false;
     }
   }
@@ -802,23 +816,25 @@
       }
 
       const btn = document.getElementById('submit-btn');
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = '게시 중...';
-      }
+      const resetBtn = () => {
+        if (btn) { btn.disabled = false; btn.textContent = '댓글 남기기 🐯'; }
+      };
 
-      const success = await postComment(text, _pendingCard);
-      if (success) {
-        textarea.value = '';
-        const counter = document.getElementById('char-counter');
-        if (counter) counter.textContent = '300자 남음';
-        _pendingCard = null;
-        renderCardPreview();
-      }
+      if (btn) { btn.disabled = true; btn.textContent = '게시 중...'; }
 
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = '댓글 남기기 🐯';
+      try {
+        const success = await postComment(text, _pendingCard);
+        if (success) {
+          textarea.value = '';
+          const counter = document.getElementById('char-counter');
+          if (counter) counter.textContent = '300자 남음';
+          _pendingCard = null;
+          renderCardPreview();
+        }
+      } catch (e) {
+        console.error('submitComment 오류:', e);
+      } finally {
+        resetBtn();
       }
     }
   };
