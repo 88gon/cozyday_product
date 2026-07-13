@@ -634,26 +634,13 @@
     const trimmed = (text || '').trim();
     if (!trimmed || trimmed.length > 300) return false;
 
-    const db = getDb();
-    if (!db) {
-      alert('Firebase 설정이 필요합니다. firebase-config.js를 확인해주세요.');
-      return false;
-    }
-
-    // 태그 자동 추출 (일간 글자 or #태그)
+    // 태그 자동 추출
     const tags = [];
     const cache = JSON.parse(localStorage.getItem(RESULT_CACHE_KEY) || '{}');
     if (cache.dayGan && GAN_NOUNS[cache.dayGan]) {
-      tags.push('#' + (cache.dayGan === '甲' ? '갑목일간' :
-        cache.dayGan === '乙' ? '을목일간' :
-        cache.dayGan === '丙' ? '병화일간' :
-        cache.dayGan === '丁' ? '정화일간' :
-        cache.dayGan === '戊' ? '무토일간' :
-        cache.dayGan === '己' ? '기토일간' :
-        cache.dayGan === '庚' ? '경금일간' :
-        cache.dayGan === '辛' ? '신금일간' :
-        cache.dayGan === '壬' ? '임수일간' :
-        cache.dayGan === '癸' ? '계수일간' : ''));
+      const ganTagMap = { '甲':'갑목일간','乙':'을목일간','丙':'병화일간','丁':'정화일간',
+        '戊':'무토일간','己':'기토일간','庚':'경금일간','辛':'신금일간','壬':'임수일간','癸':'계수일간' };
+      if (ganTagMap[cache.dayGan]) tags.push('#' + ganTagMap[cache.dayGan]);
     }
 
     const docData = {
@@ -664,12 +651,34 @@
       tags: tags.filter(Boolean),
       reactions: { heart: 0, wow: 0, same: 0 },
       reactedSessions: [],
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      createdAt: null
     };
 
+    const db = getDb();
+
+    // Firebase 미연결 시 로컬 임시 저장 (새로고침 시 사라짐)
+    if (!db) {
+      const localId = 'local_' + Date.now();
+      const localDoc = {
+        id: localId,
+        data: () => ({ ...docData, createdAt: { toDate: () => new Date() } })
+      };
+      const listEl = document.getElementById('comments-list');
+      const emptyEl = document.getElementById('empty-state');
+      if (listEl) {
+        if (emptyEl) emptyEl.style.display = 'none';
+        listEl.querySelectorAll('.seed-comment').forEach(el => el.remove());
+        listEl.insertAdjacentHTML('afterbegin', renderComment(localDoc, _sessionId));
+      }
+      _comments.unshift(localDoc);
+      showToast('댓글이 등록됐어요 🐯');
+      return true;
+    }
+
+    // Firebase 연결 시 Firestore에 저장
+    docData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
     try {
       const ref = await withTimeout(db.collection(COLLECTION).add(docData), 8000);
-      // 즉시 로컬에 추가 (실시간 리스너가 처리하기 전에 UI 업데이트)
       const localDoc = {
         id: ref.id,
         data: () => ({ ...docData, createdAt: { toDate: () => new Date() } })
@@ -678,21 +687,30 @@
       const emptyEl = document.getElementById('empty-state');
       if (listEl) {
         if (emptyEl) emptyEl.style.display = 'none';
-        // 씨앗 댓글 제거 후 실제 댓글 삽입
         listEl.querySelectorAll('.seed-comment').forEach(el => el.remove());
         listEl.insertAdjacentHTML('afterbegin', renderComment(localDoc, _sessionId));
       }
       _comments.unshift(localDoc);
+      showToast('댓글이 등록됐어요 🐯');
       return true;
     } catch (err) {
       console.error('댓글 게시 실패:', err);
-      if (err.message === 'timeout') {
-        alert('🐯 서버 연결이 느려요. Firebase 설정을 확인하거나 잠시 후 다시 시도해주세요.');
-      } else {
-        alert('댓글 게시에 실패했습니다. 잠시 후 다시 시도해주세요.');
-      }
+      showToast('게시 실패. 잠시 후 다시 시도해주세요 😿', true);
       return false;
     }
+  }
+
+  // 토스트 메시지
+  function showToast(msg, isError) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    toast.style.cssText = `position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+      background:${isError ? '#e74c3c' : '#e67e22'};color:white;padding:12px 24px;
+      border-radius:24px;font-size:0.9em;font-weight:bold;z-index:99999;
+      box-shadow:0 4px 12px rgba(0,0,0,0.15);pointer-events:none;
+      animation:fadeInUp 0.3s ease;`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
   }
 
   // ─────────────────────────────────────────────
