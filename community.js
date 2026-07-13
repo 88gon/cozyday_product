@@ -176,6 +176,169 @@
   }
 
   // ─────────────────────────────────────────────
+  // 씨앗 댓글 (첫 방문자용 샘플)
+  // ─────────────────────────────────────────────
+  const SEED_COMMENTS = [
+    {
+      id: 'seed_1',
+      nickname: '따뜻한 정화일간',
+      text: '처음으로 사주 봤는데 너무 신기해요 😮 제가 왜 이렇게 감성적이고 눈물이 많은지 드디어 이해됐어요 ㅎㅎ 정화일간이라 촛불처럼 따뜻하지만 혼자 타오른다고 하더라고요. 공감되는 분 계신가요? 🕯️',
+      card: {
+        dayPillar: '丁卯',
+        tags: ['#감수성풍부', '#섬세함', '#따뜻한마음'],
+        mbtiSoulmate: 'ISFJ',
+        mbtiChar: '🕯️',
+        summary: '어둠 속에서도 꺼지지 않는 촛불처럼, 당신은 주변 사람들에게 따뜻한 빛을 나눠주는 존재입니다...'
+      },
+      tags: ['#정화일간'],
+      reactions: { heart: 24, wow: 8, same: 31 },
+      createdAt: new Date(Date.now() - 1000 * 60 * 14)
+    },
+    {
+      id: 'seed_2',
+      nickname: '외로운 임수일간',
+      text: '임수일간이라 생각이 너무 많다는 게 찰떡같이 맞아요 ㅋㅋ 소울메이트가 INTP라고 나왔는데... 솔직히 지적이고 대화 잘 통하는 사람 만나고 싶어요. 사주 보고 나서 내가 어떤 사람을 원하는지 더 선명해진 느낌? 여기 INTP 분 계시면 반가워요 👋',
+      card: {
+        dayPillar: '壬午',
+        tags: ['#생각많음', '#넓은포부', '#지혜로움'],
+        mbtiSoulmate: 'INTP',
+        mbtiChar: '🌊',
+        summary: '드넓은 바다처럼 깊고 포용력 있는 당신, 흐름을 읽는 탁월한 직관으로 어디서든 리더가 될 운명입니다...'
+      },
+      tags: ['#임수일간', '#인연운'],
+      reactions: { heart: 41, wow: 12, same: 19 },
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2)
+    },
+    {
+      id: 'seed_3',
+      nickname: '반짝이는 신금일간',
+      text: '이번에 드디어 취업했어요!! 🎉 직업 적성 파트에서 나온 분야가 제가 지원한 곳이랑 딱 맞더라고요. 사주 보고 나서 확신이 생겼달까요? 다들 취업 준비 중이시면 적성 파트 꼭 읽어보세요. 진짜 도움 됐어요!',
+      card: null,
+      tags: ['#신금일간', '#취업운'],
+      reactions: { heart: 67, wow: 22, same: 14 },
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5)
+    },
+    {
+      id: 'seed_4',
+      nickname: '묵묵한 무토일간',
+      text: '혼자 살다 보니 사주라도 봐야 위로가 되더라고요 ㅎㅎ 무토일간이라 산처럼 듬직하대요... 근데 현실은 집에서 혼자 사주 보는 사람😅 그래도 오행 분석 읽으면서 나 이런 면이 있었구나 하고 의외로 위안이 많이 됐어요. 여기 혼자인 분들 반가워요.',
+      card: {
+        dayPillar: '戊申',
+        tags: ['#듬직함', '#신뢰', '#중재자기질'],
+        mbtiSoulmate: 'ESTP',
+        mbtiChar: '⛰️',
+        summary: '태산처럼 흔들리지 않는 당신, 묵묵히 버티는 힘이 남다릅니다. 주변 사람들이 당신을 가장 믿는 이유입니다...'
+      },
+      tags: ['#무토일간', '#고민상담'],
+      reactions: { heart: 88, wow: 6, same: 74 },
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 11)
+    },
+    {
+      id: 'seed_5',
+      nickname: '깊은 갑목일간',
+      text: '여기 계신 분들 혹시 상대방 일주 보고 궁합 생각해보신 적 있어요? 저 좋아하는 사람이 을목일간이라는데 목기끼리 잘 맞는 건지 너무 궁금해서요 😅 사주로 궁합 보는 거 믿으세요?',
+      card: null,
+      tags: ['#갑목일간', '#인연운'],
+      reactions: { heart: 33, wow: 17, same: 28 },
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 18)
+    },
+    {
+      id: 'seed_6',
+      nickname: '엉뚱한 계수일간',
+      text: '계수일간이라 생각이 많고 걱정을 사서 한다는 말이... 진짜 너무 맞아서 소름 ㅠㅠ 나쁜 건 안 맞았으면 했는데 왜 이런 건 다 맞지. 근데 신기한 건 읽고 나서 오히려 위로가 됐어요. 나만 이런 게 아니구나 싶어서요. 다들 그런 경험 있어요?',
+      card: {
+        dayPillar: '癸丑',
+        tags: ['#총명함', '#유연함', '#생각많음'],
+        mbtiSoulmate: 'INTP',
+        mbtiChar: '💧',
+        summary: '대지를 촉촉이 적시는 봄비처럼, 당신의 섬세한 감수성은 메마른 마음에 생기를 불어넣는 특별한 재능입니다...'
+      },
+      tags: ['#계수일간'],
+      reactions: { heart: 56, wow: 19, same: 62 },
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 26)
+    },
+    {
+      id: 'seed_7',
+      nickname: '자유로운 을목일간',
+      text: '소울메이트 MBTI 보고 신기해서 왔어요 ㅋㅋ INFJ라고 나왔는데 진짜로 주변 INFJ 분들이랑 유난히 잘 통하거든요? 우연인지 필연인지는 모르겠지만ㅎㅎ 혹시 소울메이트 MBTI랑 실제로 잘 맞으셨던 분 있어요? 궁금해요!',
+      card: null,
+      tags: ['#을목일간', '#인연운'],
+      reactions: { heart: 29, wow: 38, same: 17 },
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 34)
+    },
+    {
+      id: 'seed_8',
+      nickname: '낙천적인 병화일간',
+      text: '여기 처음 와봤는데 분위기 좋네요 🌻 올해 유난히 힘든 일이 많았는데 사주에서 "지금이 과도기이며 곧 새로운 시작이 온다"는 말에 왜 이렇게 위로가 됐는지 몰라요 ㅠㅠ 모두들 지금 어떤 시기를 보내고 계세요? 서로 응원해요!',
+      card: {
+        dayPillar: '丙寅',
+        tags: ['#열정가', '#밝은에너지', '#카리스마'],
+        mbtiSoulmate: 'ISFJ',
+        mbtiChar: '☀️',
+        summary: '하늘에 뜬 태양처럼 눈부신 당신, 어디에 있든 주변을 환하게 밝히는 타고난 에너지의 소유자입니다...'
+      },
+      tags: ['#병화일간', '#고민상담'],
+      reactions: { heart: 103, wow: 11, same: 88 },
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48)
+    },
+    {
+      id: 'seed_9',
+      nickname: '섬세한 기토일간',
+      text: '기토일간이라 포용력 있고 늘 주변 사람 챙기는 역할이라는 게 너무 맞아요. 근데 가끔은 저도 누군가가 먼저 챙겨줬으면 하는 생각이 드는 날이 있어요 🤍 여기 비슷한 분 계신가요? 아니면 잘 챙겨주는 분... 계신가요 ㅎㅎ',
+      card: null,
+      tags: ['#기토일간', '#인연운', '#고민상담'],
+      reactions: { heart: 79, wow: 9, same: 91 },
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 60)
+    },
+    {
+      id: 'seed_10',
+      nickname: '날카로운 경금일간',
+      text: '경금일간 직업 적성에 법조인, 군인, 외과의사가 나왔는데 저 지금 그쪽 방향으로 공부하고 있거든요? 진짜 소름 ㄷㄷ 재미로 봤다가 사주 믿게 됐어요. 자기 일주 적성이랑 실제 하는 일 맞는 분들 있으면 댓글 달아줘요!',
+      card: {
+        dayPillar: '庚子',
+        tags: ['#결단력', '#정의감', '#카리스마'],
+        mbtiSoulmate: 'ENFJ',
+        mbtiChar: '💎',
+        summary: '단단한 쇠처럼 흔들리지 않는 의지와 정의감, 당신은 어떤 상황에서도 옳은 길을 선택하는 강인한 사람입니다...'
+      },
+      tags: ['#경금일간', '#취업운'],
+      reactions: { heart: 47, wow: 55, same: 23 },
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 72)
+    }
+  ];
+
+  function renderSeedComment(comment) {
+    const reactions = comment.reactions || { heart: 0, wow: 0, same: 0 };
+    const tagsHtml = (comment.tags || []).map(t =>
+      `<span style="display:inline-block;background:#fff3e0;color:#e67e22;padding:3px 9px;border-radius:12px;font-size:0.8em;margin-right:4px;margin-top:4px;border:1px solid #ffcc80;">${t}</span>`
+    ).join('');
+    return `
+      <div class="comment-item seed-comment" data-id="${comment.id}" style="background:white;border-radius:12px;padding:16px 18px;margin-bottom:14px;border:1px solid #ffedda;box-shadow:0 2px 8px rgba(243,156,18,0.06);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+          <span style="font-weight:bold;color:#d35400;font-size:0.95em;">${escapeHtml(comment.nickname)}</span>
+          <span style="color:#bbb;font-size:0.8em;margin-left:auto;">${relativeTime(comment.createdAt)}</span>
+        </div>
+        ${renderCard(comment.card)}
+        <p style="margin:0 0 10px;line-height:1.7;color:#3d3330;word-break:break-word;">${escapeHtml(comment.text)}</p>
+        ${tagsHtml ? `<div style="margin-top:8px;">${tagsHtml}</div>` : ''}
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+          <button onclick="CommunityApp._seedReact('${comment.id}','heart',this)" style="background:#fffaf5;border:1px solid #ffedda;border-radius:20px;padding:6px 14px;cursor:pointer;font-size:0.85em;color:#e67e22;transition:all 0.2s;">
+            ❤️ 공감 <span class="sc-heart">${reactions.heart}</span>
+          </button>
+          <button onclick="CommunityApp._seedReact('${comment.id}','same',this)" style="background:#fffaf5;border:1px solid #ffedda;border-radius:20px;padding:6px 14px;cursor:pointer;font-size:0.85em;color:#e67e22;transition:all 0.2s;">
+            😊 힘내요 <span class="sc-same">${reactions.same}</span>
+          </button>
+          <button onclick="CommunityApp._seedReact('${comment.id}','wow',this)" style="background:#fffaf5;border:1px solid #ffedda;border-radius:20px;padding:6px 14px;cursor:pointer;font-size:0.85em;color:#e67e22;transition:all 0.2s;">
+            🤔 신기해요 <span class="sc-wow">${reactions.wow}</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  const _seedReacted = {};
+
+  // ─────────────────────────────────────────────
   // 스켈레톤 로딩
   // ─────────────────────────────────────────────
   function skeletonHtml() {
@@ -332,14 +495,20 @@
 
     const db = getDb();
     if (!db) {
+      // Firebase 미설정 시 씨앗 댓글 표시
       if (listEl) {
-        listEl.innerHTML = `
-          <div style="text-align:center;padding:30px;color:#e67e22;">
-            <div style="font-size:2em;">🐯</div>
-            <p style="margin-top:10px;color:#aaa;">Firebase 설정이 필요합니다. firebase-config.js의 API 키를 설정해주세요.</p>
-            <button onclick="CommunityApp.loadComments(true)" style="background:#f39c12;color:white;border:none;border-radius:20px;padding:8px 20px;cursor:pointer;margin-top:10px;">다시 시도</button>
-          </div>`;
+        const filtered = _activeTag
+          ? SEED_COMMENTS.filter(c => (c.tags || []).includes(_activeTag))
+          : SEED_COMMENTS;
+        if (filtered.length === 0) {
+          listEl.innerHTML = '';
+          if (emptyEl) emptyEl.style.display = 'block';
+        } else {
+          if (emptyEl) emptyEl.style.display = 'none';
+          listEl.innerHTML = filtered.map(renderSeedComment).join('');
+        }
       }
+      if (loadMoreBtn) loadMoreBtn.style.display = 'none';
       _loading = false;
       return;
     }
@@ -363,8 +532,19 @@
       const snapshot = await query.get();
 
       if (snapshot.empty && _comments.length === 0) {
-        if (listEl) listEl.innerHTML = '';
-        if (emptyEl) emptyEl.style.display = 'block';
+        // 실제 댓글 없으면 씨앗 댓글 표시
+        if (listEl) {
+          const filtered = _activeTag
+            ? SEED_COMMENTS.filter(c => (c.tags || []).includes(_activeTag))
+            : SEED_COMMENTS;
+          if (filtered.length === 0) {
+            listEl.innerHTML = '';
+            if (emptyEl) emptyEl.style.display = 'block';
+          } else {
+            if (emptyEl) emptyEl.style.display = 'none';
+            listEl.innerHTML = filtered.map(renderSeedComment).join('');
+          }
+        }
         if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         _loading = false;
         return;
@@ -584,6 +764,22 @@
         renderNicknameSection();
       } else {
         alert('닉네임을 입력해주세요. (최대 12자)');
+      }
+    },
+
+    _seedReact: function (commentId, type, btn) {
+      const key = commentId + '_' + type;
+      if (_seedReacted[key]) return;
+      _seedReacted[key] = true;
+      const comment = SEED_COMMENTS.find(c => c.id === commentId);
+      if (!comment) return;
+      comment.reactions[type] = (comment.reactions[type] || 0) + 1;
+      const item = document.querySelector(`.seed-comment[data-id="${commentId}"]`);
+      if (item) {
+        const span = item.querySelector('.sc-' + type);
+        if (span) span.textContent = comment.reactions[type];
+        btn.style.background = '#ffe0b2';
+        btn.style.borderColor = '#f39c12';
       }
     },
 
