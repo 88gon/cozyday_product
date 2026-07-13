@@ -206,21 +206,31 @@
     const btnStyle = (type) =>
       `background:${reacted?'#ffe0b2':'#fffaf5'};border:1px solid ${reacted?'#f39c12':'#ffedda'};border-radius:20px;padding:6px 14px;cursor:pointer;font-size:0.85em;color:#e67e22;transition:all 0.2s;`;
 
+    const editDeleteBtns = isMine || comment.hasPin ? `
+      <div style="display:flex;gap:6px;margin-top:10px;justify-content:flex-end;">
+        <button onclick="CommunityApp.editComment('${comment.id}')"
+          style="background:none;border:1px solid #ffedda;border-radius:16px;padding:4px 12px;cursor:pointer;font-size:0.8em;color:#aaa;">✏️ 수정</button>
+        <button onclick="CommunityApp.deleteComment('${comment.id}')"
+          style="background:none;border:1px solid #ffedda;border-radius:16px;padding:4px 12px;cursor:pointer;font-size:0.8em;color:#e74c3c;">🗑️ 삭제</button>
+      </div>` : '';
+
     return `
       <div class="comment-item" data-id="${comment.id}" style="background:white;border-radius:12px;padding:16px 18px;margin-bottom:14px;border:1px solid #ffedda;box-shadow:0 2px 8px rgba(243,156,18,0.06);">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
           <span style="font-weight:bold;color:#d35400;font-size:0.95em;">${escapeHtml(comment.nickname||'익명')}</span>
           ${isMine?`<span style="background:#ffe0b2;color:#e65100;font-size:0.72em;padding:2px 7px;border-radius:8px;font-weight:bold;">내 댓글</span>`:''}
+          ${comment.hasPin?`<span style="font-size:0.72em;color:#bbb;">🔒</span>`:''}
           <span style="color:#bbb;font-size:0.8em;margin-left:auto;">${relativeTime(comment.createdAt)}</span>
         </div>
         ${renderCard(comment.card)}
-        <p style="margin:0 0 10px;line-height:1.7;color:#3d3330;word-break:break-word;">${escapeHtml(comment.text||'')}</p>
+        <p class="comment-text" style="margin:0 0 10px;line-height:1.7;color:#3d3330;word-break:break-word;">${escapeHtml(comment.text||'')}</p>
         ${tagsHtml?`<div style="margin-top:8px;">${tagsHtml}</div>`:''}
         <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
           <button onclick="CommunityApp.reactToComment('${comment.id}','heart')" style="${btnStyle('heart')}">❤️ 공감 <span class="rc-heart-${comment.id}">${reactions.heart||0}</span></button>
           <button onclick="CommunityApp.reactToComment('${comment.id}','same')"  style="${btnStyle('same')}">😊 힘내요 <span class="rc-same-${comment.id}">${reactions.same||0}</span></button>
           <button onclick="CommunityApp.reactToComment('${comment.id}','wow')"   style="${btnStyle('wow')}">🤔 신기해요 <span class="rc-wow-${comment.id}">${reactions.wow||0}</span></button>
         </div>
+        ${editDeleteBtns}
       </div>`;
   }
 
@@ -511,21 +521,25 @@
       _latestCreatedAt = localComment.createdAt;
     }
 
+    const pinInput = document.getElementById('comment-pin');
+    const pin = pinInput ? pinInput.value.trim() : '';
+
     try {
       const data = await apiFetch('/comments', {
         method: 'POST',
-        body: JSON.stringify({ sessionId: _sessionId, nickname: _nickname, text: trimmed, card: card||null, tags })
+        body: JSON.stringify({ sessionId: _sessionId, nickname: _nickname, text: trimmed, card: card||null, tags, pin: pin||null })
       });
 
       if (!data.ok) throw new Error(data.error || '게시 실패');
 
       addLocalComment(data.id, data.createdAt);
+      if (pinInput) pinInput.value = '';
       showToast('댓글이 등록됐어요 🐯');
       return true;
     } catch(err) {
       console.error('API 게시 실패 — 로컬 임시 저장:', err.message);
-      // API 실패 시 로컬에만 표시 (D1 미연결 상태 등)
       addLocalComment('local_' + Date.now(), Date.now());
+      if (pinInput) pinInput.value = '';
       showToast('댓글이 등록됐어요 🐯');
       return true;
     }
@@ -614,6 +628,124 @@
       } finally {
         resetBtn();
       }
+    },
+
+    // ── 댓글 수정 ──────────────────────────────
+    editComment(id) {
+      const el = document.querySelector(`.comment-item[data-id="${id}"]`);
+      if (!el) return;
+      const pEl = el.querySelector('.comment-text');
+      if (!pEl || el.querySelector('.edit-area')) return; // 이미 수정 중
+      const original = pEl.textContent;
+      pEl.style.display = 'none';
+
+      const editArea = document.createElement('div');
+      editArea.className = 'edit-area';
+      editArea.innerHTML = `
+        <textarea id="edit-ta-${id}" maxlength="300"
+          style="width:100%;padding:10px;border:1px solid #f39c12;border-radius:8px;font-size:0.95em;resize:vertical;min-height:80px;box-sizing:border-box;color:#3d3330;outline:none;"
+        >${escapeHtml(original)}</textarea>
+        <div style="font-size:0.78em;color:#bbb;margin:4px 0 6px;">비밀번호로 등록한 댓글은 비밀번호를 입력해주세요</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input type="number" id="edit-pin-${id}" min="0" max="9999" maxlength="4" placeholder="🔒 비밀번호(선택)"
+            oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"
+            style="width:120px;padding:7px 10px;border:1px solid #ffedda;border-radius:8px;font-size:0.83em;color:#d35400;background:#fffbf5;outline:none;-moz-appearance:textfield;appearance:textfield;">
+          <button onclick="CommunityApp.submitEdit('${id}')"
+            style="background:#f39c12;color:white;border:none;border-radius:8px;padding:7px 16px;cursor:pointer;font-weight:bold;font-size:0.88em;">저장</button>
+          <button onclick="CommunityApp.cancelEdit('${id}')"
+            style="background:none;border:1px solid #ffedda;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:0.88em;color:#aaa;">취소</button>
+        </div>`;
+      pEl.insertAdjacentElement('afterend', editArea);
+    },
+
+    cancelEdit(id) {
+      const el = document.querySelector(`.comment-item[data-id="${id}"]`);
+      if (!el) return;
+      const editArea = el.querySelector('.edit-area');
+      const pEl      = el.querySelector('.comment-text');
+      if (editArea) editArea.remove();
+      if (pEl) pEl.style.display = '';
+    },
+
+    async submitEdit(id) {
+      const ta  = document.getElementById(`edit-ta-${id}`);
+      const pin = document.getElementById(`edit-pin-${id}`);
+      if (!ta) return;
+      const text = ta.value.trim();
+      if (!text || text.length > 300) { showToast('1~300자 이내로 입력해주세요.', true); return; }
+
+      try {
+        const data = await apiFetch('/comments', {
+          method: 'PATCH',
+          body: JSON.stringify({ commentId: id, sessionId: _sessionId, text, pin: pin?.value||null })
+        });
+        if (!data.ok) { showToast(data.error || '수정 실패', true); return; }
+
+        // UI 업데이트
+        const el  = document.querySelector(`.comment-item[data-id="${id}"]`);
+        const pEl = el?.querySelector('.comment-text');
+        if (pEl) { pEl.textContent = text; pEl.style.display = ''; }
+        el?.querySelector('.edit-area')?.remove();
+        showToast('댓글이 수정됐어요 ✏️');
+      } catch(e) {
+        // 로컬 댓글(local_)은 API 없이 DOM만 수정
+        if (id.startsWith('local_')) {
+          const el  = document.querySelector(`.comment-item[data-id="${id}"]`);
+          const pEl = el?.querySelector('.comment-text');
+          if (pEl) { pEl.textContent = text; pEl.style.display = ''; }
+          el?.querySelector('.edit-area')?.remove();
+          showToast('댓글이 수정됐어요 ✏️');
+        } else {
+          showToast('수정 실패. 잠시 후 다시 시도해주세요.', true);
+        }
+      }
+    },
+
+    // ── 댓글 삭제 ──────────────────────────────
+    deleteComment(id) {
+      // 비밀번호 입력 다이얼로그 (간단 커스텀)
+      const overlay = document.createElement('div');
+      overlay.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99998;display:flex;align-items:center;justify-content:center;`;
+      overlay.innerHTML = `
+        <div style="background:white;border-radius:16px;padding:24px;width:90%;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.15);">
+          <div style="font-size:1.1em;font-weight:bold;color:#d35400;margin-bottom:12px;">🗑️ 댓글 삭제</div>
+          <p style="font-size:0.9em;color:#4a3f35;margin:0 0 14px;">삭제하면 복구할 수 없어요.<br>비밀번호를 설정했다면 입력해주세요.</p>
+          <input type="number" id="delete-pin-input" min="0" max="9999" maxlength="4" placeholder="🔒 비밀번호 (없으면 비워두세요)"
+            oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"
+            style="width:100%;padding:10px;border:1px solid #ffedda;border-radius:8px;font-size:0.9em;box-sizing:border-box;outline:none;color:#d35400;margin-bottom:14px;-moz-appearance:textfield;appearance:textfield;">
+          <div style="display:flex;gap:8px;">
+            <button id="delete-confirm-btn"
+              style="flex:1;background:#e74c3c;color:white;border:none;border-radius:8px;padding:10px;cursor:pointer;font-weight:bold;">삭제</button>
+            <button id="delete-cancel-btn"
+              style="flex:1;background:none;border:1px solid #ffedda;border-radius:8px;padding:10px;cursor:pointer;color:#aaa;">취소</button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+
+      overlay.querySelector('#delete-cancel-btn').onclick = () => overlay.remove();
+      overlay.querySelector('#delete-confirm-btn').onclick = async () => {
+        const pin = overlay.querySelector('#delete-pin-input')?.value || '';
+        overlay.remove();
+
+        // 로컬 댓글
+        if (id.startsWith('local_')) {
+          document.querySelector(`.comment-item[data-id="${id}"]`)?.remove();
+          showToast('댓글이 삭제됐어요 🗑️');
+          return;
+        }
+
+        try {
+          const data = await apiFetch('/comments', {
+            method: 'DELETE',
+            body: JSON.stringify({ commentId: id, sessionId: _sessionId, pin: pin||null })
+          });
+          if (!data.ok) { showToast(data.error || '삭제 실패', true); return; }
+          document.querySelector(`.comment-item[data-id="${id}"]`)?.remove();
+          showToast('댓글이 삭제됐어요 🗑️');
+        } catch(e) {
+          showToast('삭제 실패. 잠시 후 다시 시도해주세요.', true);
+        }
+      };
     },
 
     _seedReact(id, type, btn) {

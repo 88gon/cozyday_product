@@ -17,3 +17,11 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 
 CREATE INDEX IF NOT EXISTS idx_created_at ON comments(created_at DESC);
+
+-- ── Migration v2: 수정/삭제 기능 지원 ──────────────────
+-- D1 콘솔에서 아래 두 줄을 실행해주세요 (이미 테이블이 있는 경우):
+--   ALTER TABLE comments ADD COLUMN pin_hash TEXT;
+--   ALTER TABLE comments ADD COLUMN ip_hash  TEXT;
+-- (신규 테이블 생성 시에는 아래 DROP 후 위 CREATE TABLE 재실행)
+ALTER TABLE comments ADD COLUMN pin_hash TEXT;
+ALTER TABLE comments ADD COLUMN ip_hash  TEXT;

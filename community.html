@@ -289,8 +289,13 @@
     ></textarea>
     <div class="counter-row">
       <span id="char-counter">300자 남음</span>
+      <input type="number" id="comment-pin" min="0" max="9999" maxlength="4"
+        placeholder="🔒 비밀번호(숫자 4자)"
+        oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"
+        style="width:130px;padding:8px 10px;border:1px solid #ffedda;border-radius:8px;font-size:0.83em;color:#d35400;background:#fffbf5;outline:none;-moz-appearance:textfield;appearance:textfield;">
       <button id="submit-btn" onclick="CommunityApp.submitComment()">댓글 남기기 🐯</button>
     </div>
+    <div style="font-size:0.78em;color:#bbb;margin-top:6px;padding:0 2px;">비밀번호를 입력하면 다른 기기에서도 수정·삭제할 수 있어요 (선택)</div>
   </div>
 
   <!-- COMMENTS LIST -->
