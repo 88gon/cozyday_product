@@ -214,16 +214,19 @@ function calculateSaju() {
   setTimeout(() => {
       loadingArea.style.display = 'none';
       // 💥 [수정] 일주 키 값과 일간 정보를 넘겨줍니다.
-      renderKeywordResult(resultData, dayPillarKey, saju.getDayGan().toString());
+      renderKeywordResult(resultData, dayPillarKey, saju.getDayGan().toString(), name);
   }, 1500);
 }
 
 // 💥 [대폭 수정] 방대한 데이터를 화면에 렌더링하는 함수
-function renderKeywordResult(data, dayPillar, dayGan) {
+function renderKeywordResult(data, dayPillar, dayGan, userName) {
   const resultArea = document.getElementById('resultArea');
-  
+
   // 분리해둔 MBTI 데이터 가져오기 (기본값 ENFP로 설정)
   let soulmateData = mbtiSoulmateMap[dayGan] || { mbti: "ENFP", char: "🌿", desc: "당신의 성장을 응원해줄 자유로운 영혼", item: "따뜻한 차 한 잔" };
+
+  // 사주 결과를 공유용으로 저장
+  storeSajuResultForSharing(data, dayPillar, dayGan, soulmateData, userName || '');
 
   let html = `
     <div class="tiger-comment" style="background: #fdf5e6; padding: 18px; border-radius: 12px; margin-bottom: 25px; border-left: 6px solid #8d6e63; font-size: 1em; line-height: 1.7; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
@@ -292,6 +295,14 @@ function renderKeywordResult(data, dayPillar, dayGan) {
     </div>
   `;
 
+  // 공유 버튼 섹션
+  html += `
+    <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+      <button onclick="shareToCommunity()" style="flex: 1; min-width: 140px; padding: 14px 10px; background: linear-gradient(135deg, #e67e22, #f39c12); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 0.95em; font-weight: bold; box-shadow: 0 4px 0 #d35400; transition: all 0.2s;">🎋 대나무숲에 공유하기</button>
+      <button onclick="shareToKakao()" style="flex: 1; min-width: 140px; padding: 14px 10px; background: #FEE500; color: #3C1E1E; border: none; border-radius: 12px; cursor: pointer; font-size: 0.95em; font-weight: bold; box-shadow: 0 4px 0 #d4c000; transition: all 0.2s;">💬 카카오톡 공유</button>
+    </div>
+  `;
+
   resultArea.innerHTML = html;
 }
 
@@ -320,6 +331,60 @@ function getFallbackSajuData(pillar, gan) {
     personality: info.desc,
     strategy: "네 일주에 대한 정밀 분석은 불침번 서는 중이라 조금 늦어지고 있어. 하지만 기본 기운만 봐도 넌 꽤 특별한 놈이야."
   };
+}
+
+// 사주 결과를 세션/로컬스토리지에 저장 (커뮤니티 공유용)
+function storeSajuResultForSharing(data, dayPillar, dayGan, soulmateData, userName) {
+  const card = {
+    dayPillar: dayPillar,
+    dayGan: dayGan,
+    title: data.title,
+    tags: data.tags,
+    mbtiSoulmate: soulmateData.mbti,
+    mbtiChar: soulmateData.char,
+    summary: data.coreSummary.substring(0, 120) + '...',
+    userName: userName ? (userName.charAt(0) + '**') : ''
+  };
+  sessionStorage.setItem('saju_result_card', JSON.stringify(card));
+  // 닉네임 생성을 위해 로컬스토리지에도 저장
+  localStorage.setItem('saju_result_cache', JSON.stringify({ dayPillar: dayPillar, dayGan: dayGan }));
+}
+
+// 커뮤니티로 공유
+function shareToCommunity() {
+  const card = sessionStorage.getItem('saju_result_card');
+  if (card) {
+    sessionStorage.setItem('pending_share_card', card);
+  }
+  window.location.href = 'community.html?share=1';
+}
+
+// 카카오톡 공유 (Web Share API 또는 클립보드 복사)
+function shareToKakao() {
+  const card = JSON.parse(sessionStorage.getItem('saju_result_card') || '{}');
+  const text = card.dayPillar ?
+    `[49사주 결과] ${card.dayPillar} 일주\n${card.title}\n${(card.tags || []).join(' ')}\n소울메이트 MBTI: ${card.mbtiSoulmate || ''}\n\n나도 확인해보기 👉 https://49saju.xyz` :
+    `나의 49사주 결과를 확인해보세요! 👉 https://49saju.xyz`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: '49사주 결과',
+      text: text,
+      url: 'https://49saju.xyz'
+    }).catch(function() {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      alert('📋 결과가 복사되었습니다!\n카카오톡에 붙여넣기 해주세요. 🐯');
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('📋 결과가 복사되었습니다!\n카카오톡에 붙여넣기 해주세요. 🐯');
+  }
 }
 
 // 💥 [수정] 아코디언 애니메이션 및 아이콘 변경 로직 추가

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LR4Y6NQ78B"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LR4Y6NQ78B');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대나무숲 - 49사주 | 사주 수다방</title>
+  <meta name="description" content="49사주 대나무숲 수다방! 사주 결과를 공유하고 일주 이야기, 고민, 공감을 자유롭게 나눠보세요. 닉네임만 있으면 누구든 OK.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://49saju.xyz/community.html">
+  <meta property="og:title" content="49사주 대나무숲 - 사주 수다방">
+  <meta property="og:description" content="사주 결과 공유, 고민 상담, 일주 토크! 익명으로 자유롭게 떠들어봐.">
+  <link rel="canonical" href="https://49saju.xyz/community.html">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6869816602894526" crossorigin="anonymous"></script>
+  <meta name="google-adsense-account" content="ca-pub-6869816602894526">
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+      background-color: #fffaf5;
+      margin: 0;
+      padding: 0 0 80px;
+      color: #4a3f35;
+    }
+
+    /* NAV */
+    nav {
+      width: 100%;
+      max-width: 700px;
+      display: flex;
+      justify-content: space-around;
+      padding: 15px 0;
+      margin: 0 auto 24px auto;
+      border-bottom: 1px solid #ffedda;
+    }
+    nav a {
+      text-decoration: none;
+      color: #d35400;
+      font-weight: bold;
+      font-size: 0.95em;
+      padding: 4px 0;
+    }
+    nav a.active {
+      color: #e67e22;
+      border-bottom: 2px solid #e67e22;
+    }
+
+    /* LAYOUT */
+    .page-wrap {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* HEADER */
+    .community-header {
+      background: linear-gradient(135deg, #e67e22, #f39c12);
+      color: white;
+      border-radius: 16px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      position: relative;
+      box-shadow: 0 4px 16px rgba(230,126,34,0.22);
+    }
+    .community-header .tiger-label {
+      font-weight: bold;
+      font-size: 1.05em;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .community-header p {
+      margin: 0;
+      font-size: 0.95em;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+    .community-header::after {
+      content: '🐯';
+      position: absolute;
+      right: 20px;
+      bottom: 16px;
+      font-size: 2.2em;
+      opacity: 0.18;
+    }
+
+    /* TAG FILTER */
+    .tag-filter-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 0 10px;
+      margin-bottom: 16px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .tag-filter-bar::-webkit-scrollbar { display: none; }
+    .tag-chip {
+      display: inline-block;
+      white-space: nowrap;
+      background: white;
+      color: #e67e22;
+      border: 1px solid #ffcc80;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.82em;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .tag-chip:hover { background: #fff3e0; }
+    .tag-chip.active { background: #e67e22; color: white; border-color: #e67e22; }
+
+    /* COMMENT INPUT AREA */
+    .comment-input-box {
+      background: white;
+      border: 1px solid #ffedda;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(243,156,18,0.07);
+    }
+    .comment-input-box textarea {
+      width: 100%;
+      min-height: 90px;
+      border: 1px solid #ffedda;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.95em;
+      font-family: inherit;
+      color: #4a3f35;
+      background: #fffbf5;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+      line-height: 1.6;
+    }
+    .comment-input-box textarea:focus { border-color: #f39c12; background: white; }
+    .counter-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+    #char-counter { font-size: 0.8em; color: #aaa; }
+    #submit-btn {
+      background: linear-gradient(135deg, #e67e22, #f39c12);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 22px;
+      font-size: 0.95em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      box-shadow: 0 3px 0 #d35400;
+    }
+    #submit-btn:hover { opacity: 0.9; }
+    #submit-btn:active { transform: translateY(2px); box-shadow: none; }
+    #submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* COMMENTS LIST */
+    #comments-list .comment-item {
+      transition: box-shadow 0.2s;
+    }
+    #comments-list .comment-item:hover {
+      box-shadow: 0 4px 14px rgba(243,156,18,0.1) !important;
+    }
+
+    /* EMPTY STATE */
+    #empty-state {
+      display: none;
+      text-align: center;
+      padding: 50px 20px;
+      color: #bbb;
+    }
+    #empty-state .tiger-empty { font-size: 3em; margin-bottom: 12px; }
+    #empty-state p { font-size: 1em; line-height: 1.6; }
+
+    /* LOAD MORE */
+    #load-more-btn {
+      display: none;
+      width: 100%;
+      background: white;
+      border: 1px solid #ffcc80;
+      color: #e67e22;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.95em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    #load-more-btn:hover { background: #fff3e0; }
+
+    /* FOOTER */
+    footer {
+      margin-top: 60px;
+      text-align: center;
+      font-size: 0.85em;
+      color: #888;
+      padding-bottom: 30px;
+      border-top: 1px solid #ffedda;
+      padding-top: 24px;
+    }
+    footer a { color: #888; text-decoration: none; margin: 0 8px; }
+
+    /* PULSE ANIMATION */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 480px) {
+      .community-header { padding: 18px 16px; }
+      .comment-input-box { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html">홈</a>
+  <a href="about.html">서비스 소개</a>
+  <a href="community.html" class="active">대나무숲</a>
+  <a href="contact.html">문의하기</a>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="community-header">
+    <span class="tiger-label">🐯 호랑이 수호신의 수다방 개설 선언</span>
+    <p>"여기는 너희들 수다방이야. 닉네임만 있으면 누구든 떠들 수 있어. 사주 결과 공유해도 되고, 그냥 하소연해도 돼. 단, 욕설은 금지다 인간들아!"</p>
+  </div>
+
+  <!-- NICKNAME SECTION -->
+  <div id="nickname-section">
+    <!-- JS로 렌더링 -->
+    <div style="background:#fffaf5;border:1px solid #ffedda;border-radius:12px;padding:16px 18px;margin-bottom:18px;">
+      <div style="color:#aaa;font-size:0.9em;">닉네임 생성 중...</div>
+    </div>
+  </div>
+
+  <!-- TAG FILTER -->
+  <div class="tag-filter-bar">
+    <div class="tag-chip" data-tag="#갑목일간">#갑목일간</div>
+    <div class="tag-chip" data-tag="#을목일간">#을목일간</div>
+    <div class="tag-chip" data-tag="#병화일간">#병화일간</div>
+    <div class="tag-chip" data-tag="#정화일간">#정화일간</div>
+    <div class="tag-chip" data-tag="#무토일간">#무토일간</div>
+    <div class="tag-chip" data-tag="#기토일간">#기토일간</div>
+    <div class="tag-chip" data-tag="#경금일간">#경금일간</div>
+    <div class="tag-chip" data-tag="#신금일간">#신금일간</div>
+    <div class="tag-chip" data-tag="#임수일간">#임수일간</div>
+    <div class="tag-chip" data-tag="#계수일간">#계수일간</div>
+    <div class="tag-chip" data-tag="#INFJ">#INFJ</div>
+    <div class="tag-chip" data-tag="#INFP">#INFP</div>
+    <div class="tag-chip" data-tag="#ENTP">#ENTP</div>
+    <div class="tag-chip" data-tag="#ENFJ">#ENFJ</div>
+    <div class="tag-chip" data-tag="#고민상담">#고민상담</div>
+    <div class="tag-chip" data-tag="#인연운">#인연운</div>
+    <div class="tag-chip" data-tag="#재물운">#재물운</div>
+    <div class="tag-chip" data-tag="#취업운">#취업운</div>
+  </div>
+
+  <!-- COMMENT INPUT -->
+  <div class="comment-input-box">
+    <div id="card-preview-area"></div>
+    <textarea
+      id="comment-textarea"
+      maxlength="300"
+      placeholder="자유롭게 사주 얘기, 고민, 공감 등을 나눠보세요! (최대 300자)"
+    ></textarea>
+    <div class="counter-row">
+      <span id="char-counter">300자 남음</span>
+      <button id="submit-btn" onclick="CommunityApp.submitComment()">댓글 남기기 🐯</button>
+    </div>
+  </div>
+
+  <!-- COMMENTS LIST -->
+  <div id="comments-list">
+    <!-- 스켈레톤 or 댓글들 -->
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div id="empty-state">
+    <div class="tiger-empty">🐯</div>
+    <p>"아직 아무도 없네.<br>첫 번째로 떠들어봐, 인간아!"</p>
+  </div>
+
+  <!-- LOAD MORE -->
+  <button id="load-more-btn" onclick="CommunityApp.loadComments(false)">댓글 더 보기 ↓</button>
+
+</div><!-- /.page-wrap -->
+
+<!-- FOOTER -->
+<footer>
+  <div style="margin-bottom: 12px;">
+    <a href="index.html">홈</a> |
+    <a href="about.html">서비스 소개</a> |
+    <a href="community.html">대나무숲</a> |
+    <a href="privacy.html">개인정보처리방침</a> |
+    <a href="terms.html">이용약관</a> |
+    <a href="contact.html">문의하기</a>
+  </div>
+  &copy; 2026 49사주. All rights reserved. 본 서비스는 오락 및 참고용으로만 제공됩니다.
+</footer>
+
+<!-- 쿠키 동의 배너 -->
+<div id="cookieConsent" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#fff8f0; border-top:2px solid #f39c12; padding:15px 20px; z-index:9999; box-shadow:0 -4px 12px rgba(0,0,0,0.08); font-size:0.88em; color:#4a3f35;">
+  <div style="max-width:700px; margin:0 auto; display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
+    <p style="margin:0; flex:1; min-width:220px; line-height:1.6;">
+      본 사이트는 서비스 개선 및 맞춤 광고 제공을 위해 <strong>쿠키</strong>와 <strong>Google Analytics, Google AdSense</strong>를 사용합니다.
+      자세한 내용은 <a href="privacy.html" style="color:#e67e22; font-weight:bold;">개인정보처리방침</a>을 확인하세요.
+    </p>
+    <button onclick="acceptCookies()" style="background:#f39c12; color:#fff; border:none; border-radius:8px; padding:10px 22px; font-size:0.95em; font-weight:bold; cursor:pointer; white-space:nowrap;">동의하기</button>
+  </div>
+</div>
+<script>
+(function() {
+  if (!localStorage.getItem('cookieConsented')) {
+    document.getElementById('cookieConsent').style.display = 'block';
+  }
+})();
+function acceptCookies() {
+  localStorage.setItem('cookieConsented', '1');
+  document.getElementById('cookieConsent').style.display = 'none';
+}
+</script>
+
+<!-- Firebase v9 compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- Firebase 설정 및 대나무숲 앱 -->
+<script src="firebase-config.js"></script>
+<script src="community.js"></script>
+
+<script>
+  // 페이지 로드 후 대나무숲 초기화
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.CommunityApp) {
+      CommunityApp.init();
+    }
+  });
+</script>
+
+</body>
+</html>
